@@ -237,6 +237,7 @@
   import { Moon, SunnySharp } from '@vicons/ionicons5';
   import { darkTheme } from 'naive-ui';
   import { animates as animateOptions } from '@/settings/animateSetting';
+  import { modifyVars } from 'less';
 
   export default defineComponent({
     name: 'ProjectSetting',
@@ -292,6 +293,9 @@
 
       function togTheme(color) {
         designStore.appTheme = color;
+        modifyVars({
+          '@primaryColor': color,
+        });
       }
 
       function togNavMode(mode) {
