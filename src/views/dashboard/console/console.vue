@@ -1,7 +1,7 @@
 <template>
   <div class="console">
     <!--数据卡片-->
-    <n-grid cols="1 s:2 m:3 l:4 xl:4 2xl:4" responsive="screen" :x-gap="12" :y-gap="8">
+    <!-- <n-grid cols="1 s:2 m:3 l:4 xl:4 2xl:4" responsive="screen" :x-gap="12" :y-gap="8">
       <n-grid-item>
         <NCard
           title="访问量"
@@ -192,7 +192,7 @@
           </template>
         </NCard>
       </n-grid-item>
-    </n-grid>
+    </n-grid> -->
 
     <!--导航卡片-->
     <div class="mt-4">
@@ -212,18 +212,21 @@
       </n-grid>
     </div>
 
-    <!--访问量 | 流量趋势-->
-    <VisiTab />
+    <!--公式-->
+    <Equations />
+    <!-- 代码 -->
+    <Code />
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
   import { getConsoleInfo } from '@/api/dashboard/console';
-  import VisiTab from './components/VisiTab.vue';
-  import { CountTo } from '@/components/CountTo/index';
+  import Equations from './components/Equation.vue';
+  import Code from './components/Code.vue';
+  // import { CountTo } from '@/components/CountTo/index';
   import {
-    CaretUpOutlined,
-    CaretDownOutlined,
+    // CaretUpOutlined,
+    // CaretDownOutlined,
     UsergroupAddOutlined,
     BarChartOutlined,
     ShoppingCartOutlined,

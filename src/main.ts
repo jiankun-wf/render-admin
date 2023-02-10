@@ -1,4 +1,6 @@
 import './styles/tailwind.css';
+import 'katex/dist/katex.css';
+
 import { createApp } from 'vue';
 import { setupNaiveDiscreteApi, setupNaive, setupDirectives } from '@/plugins';
 import App from './App.vue';

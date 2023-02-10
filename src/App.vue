@@ -4,6 +4,8 @@
     :theme="getDarkTheme"
     :theme-overrides="getThemeOverrides"
     :date-locale="dateZhCN"
+    :katex="katex"
+    :hljs="hljs"
   >
     <AppProvider>
       <RouterView />
@@ -17,6 +19,10 @@
   import { AppProvider } from '@/components/Application';
   import { useDesignSettingStore } from '@/store/modules/designSetting';
   import { lighten } from '@/utils/index';
+  import katex from 'katex';
+  import hljs from 'highlight.js/lib/core';
+  import typescript from 'highlight.js/lib/languages/typescript';
+  hljs.registerLanguage('typescript', typescript);
 
   const designStore = useDesignSettingStore();
 

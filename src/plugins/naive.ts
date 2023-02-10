@@ -69,6 +69,8 @@ const naive = NaiveUI.create({
     NaiveUI.NTimePicker,
     NaiveUI.NBackTop,
     NaiveUI.NSkeleton,
+    NaiveUI.NEquation,
+    NaiveUI.NCode,
   ],
 });
 
