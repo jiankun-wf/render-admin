@@ -195,7 +195,7 @@
     </n-grid> -->
 
     <!--导航卡片-->
-    <div class="mt-4">
+    <div>
       <n-grid cols="1 s:2 m:3 l:8 xl:8 2xl:8" responsive="screen" :x-gap="16" :y-gap="8">
         <n-grid-item v-for="(item, index) in iconList" :key="index">
           <NCard content-style="padding-top: 0;" size="small" :bordered="false">
