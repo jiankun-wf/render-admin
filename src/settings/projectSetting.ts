@@ -53,5 +53,8 @@ const setting = {
   isPageAnimate: true,
   //路由动画类型
   pageAnimateType: 'zoom-fade',
+
+  // 水印
+  waterMark: true,
 };
 export default setting;

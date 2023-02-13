@@ -122,6 +122,6 @@ export const createStorage = ({ prefixKey = '', storage = localStorage } = {}) =
   return new Storage();
 };
 
-export const storage = createStorage();
+export const storage = createStorage({ prefixKey: 'GEETYPE_' });
 
 export default Storage;

@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 import designSetting from '@/settings/designSetting';
+import { DARK_MODE, PRIMARY_COLOR } from '@/settings/constant';
+import { storage } from '@/utils/Storage';
 
 const { darkTheme, appTheme, appThemeList } = designSetting;
 
@@ -16,8 +18,8 @@ interface DesignSettingState {
 export const useDesignSettingStore = defineStore({
   id: 'app-design-setting',
   state: (): DesignSettingState => ({
-    darkTheme,
-    appTheme,
+    darkTheme: storage.get(DARK_MODE) || darkTheme,
+    appTheme: storage.get(PRIMARY_COLOR) || appTheme,
     appThemeList,
   }),
   getters: {
@@ -31,7 +33,16 @@ export const useDesignSettingStore = defineStore({
       return this.appThemeList;
     },
   },
-  actions: {},
+  actions: {
+    setDarkTheme(darkTheme: boolean) {
+      this.darkTheme = darkTheme;
+      storage.set(DARK_MODE, darkTheme, null);
+    },
+    setAppTheme(appTheme: string) {
+      this.appTheme = appTheme;
+      storage.set(PRIMARY_COLOR, appTheme, null);
+    },
+  },
 });
 
 // Need to be used outside the setup

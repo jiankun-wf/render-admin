@@ -7,6 +7,21 @@
     :katex="katex"
     :hljs="hljs"
   >
+    <NWatermark
+      v-if="getWaterMark"
+      content="大家辛苦一下，一切都会有的"
+      font-family="DingTalk_Step"
+      cross
+      fullscreen
+      :font-size="16"
+      :line-height="16"
+      :width="384"
+      :height="384"
+      :x-offset="12"
+      :y-offset="60"
+      :rotate="-15"
+      :z-index="100"
+    />
     <AppProvider>
       <RouterView />
     </AppProvider>
@@ -15,9 +30,10 @@
 
 <script lang="ts" setup>
   import { computed } from 'vue';
-  import { zhCN, dateZhCN, darkTheme } from 'naive-ui';
+  import { zhCN, dateZhCN, darkTheme, NWatermark } from 'naive-ui';
   import { AppProvider } from '@/components/Application';
   import { useDesignSettingStore } from '@/store/modules/designSetting';
+  import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { lighten } from '@/utils/index';
   import katex from 'katex';
   import hljs from 'highlight.js/lib/core';
@@ -25,6 +41,8 @@
   hljs.registerLanguage('typescript', typescript);
 
   const designStore = useDesignSettingStore();
+
+  const projectSettingStore = useProjectSettingStore();
 
   /**
    * @type import('naive-ui').GlobalThemeOverrides
@@ -46,6 +64,8 @@
   });
 
   const getDarkTheme = computed(() => (designStore.darkTheme ? darkTheme : undefined));
+
+  const getWaterMark = computed(() => projectSettingStore.getWaterMark);
 </script>
 
 <style lang="less">

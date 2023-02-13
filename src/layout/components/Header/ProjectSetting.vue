@@ -7,7 +7,11 @@
         <div class="justify-center drawer-setting-item dark-switch">
           <n-tooltip placement="bottom">
             <template #trigger>
-              <n-switch v-model:value="designStore.darkTheme" class="dark-theme-switch">
+              <n-switch
+                :value="designStore.getDarkTheme"
+                @update-value="handleChangeDarkMode"
+                class="dark-theme-switch"
+              >
                 <template #checked>
                   <n-icon size="14" color="#ffd93b">
                     <SunnySharp />
@@ -34,7 +38,7 @@
             :style="{ 'background-color': item }"
             @click="togTheme(item)"
           >
-            <n-icon size="12" v-if="item === designStore.appTheme">
+            <n-icon size="12" v-if="item === designStore.getAppTheme">
               <CheckOutlined />
             </n-icon>
           </span>
@@ -54,7 +58,7 @@
               </template>
               <span>左侧菜单模式</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-show="settingStore.navMode === 'vertical'" />
+            <n-badge dot type="success" v-show="settingStore.navMode === 'vertical'" />
           </div>
 
           <div class="drawer-setting-item-style">
@@ -68,7 +72,7 @@
               </template>
               <span>顶部菜单模式</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-show="settingStore.navMode === 'horizontal'" />
+            <n-badge dot type="success" v-show="settingStore.navMode === 'horizontal'" />
           </div>
 
           <div class="drawer-setting-item-style">
@@ -82,7 +86,7 @@
               </template>
               <span>顶部菜单混合模式</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-show="settingStore.navMode === 'horizontal-mix'" />
+            <n-badge dot type="success" v-show="settingStore.navMode === 'horizontal-mix'" />
           </div>
         </div>
 
@@ -100,7 +104,7 @@
               </template>
               <span>暗色侧边栏</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-if="settingStore.navTheme === 'dark'" />
+            <n-badge dot type="success" v-if="settingStore.navTheme === 'dark'" />
           </div>
 
           <div class="drawer-setting-item-style">
@@ -114,7 +118,7 @@
               </template>
               <span>白色侧边栏</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-if="settingStore.navTheme === 'light'" />
+            <n-badge dot type="success" v-if="settingStore.navTheme === 'light'" />
           </div>
 
           <div class="drawer-setting-item-style">
@@ -128,7 +132,7 @@
               </template>
               <span>暗色顶栏</span>
             </n-tooltip>
-            <n-badge dot color="#19be6b" v-if="settingStore.navTheme === 'header-dark'" />
+            <n-badge dot type="success" v-if="settingStore.navTheme === 'header-dark'" />
           </div>
         </div>
         <n-divider title-placement="center">界面功能</n-divider>
@@ -137,8 +141,9 @@
           <div class="drawer-setting-item-title"> 分割菜单 </div>
           <div class="drawer-setting-item-action">
             <n-switch
-              :disabled="settingStore.navMode !== 'horizontal-mix'"
-              v-model:value="settingStore.menuSetting.mixMenu"
+              :disabled="settingStore.getNavMode !== 'horizontal-mix'"
+              :value="settingStore.getMenuSetting.mixMenu"
+              @update:value="handleUpdateMixMenu"
             />
           </div>
         </div>
@@ -146,7 +151,10 @@
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 固定顶栏 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.headerSetting.fixed" />
+            <n-switch
+              :value="settingStore.getHeaderSetting.fixed"
+              @update:value="handleUpdateFixedHeader"
+            />
           </div>
         </div>
 
@@ -162,7 +170,10 @@
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 固定多页签 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.multiTabsSetting.fixed" />
+            <n-switch
+              :value="settingStore.getMultiTabsSetting.fixed"
+              @update:value="handleUpdateTagsViewFixed"
+            />
           </div>
         </div>
 
@@ -171,59 +182,72 @@
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 显示重载页面按钮 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.headerSetting.isReload" />
+            <n-switch
+              :value="settingStore.getHeaderSetting.isReload"
+              @update:value="handleUpdateShowReload"
+            />
           </div>
         </div>
 
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 显示面包屑导航 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.crumbsSetting.show" />
+            <n-switch
+              :value="settingStore.getCrumbsSetting.show"
+              @update:value="handleUpdateCrumbShow"
+            />
           </div>
         </div>
 
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 显示面包屑显示图标 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.crumbsSetting.showIcon" />
+            <n-switch
+              :value="settingStore.getCrumbsSetting.showIcon"
+              @update:value="handleUpdateCrumbShowIcon"
+            />
           </div>
         </div>
 
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 显示多页签 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.multiTabsSetting.show" />
+            <n-switch
+              :value="settingStore.getMultiTabsSetting.show"
+              @update:value="handleUpdateTagsViewShow"
+            />
           </div>
         </div>
-        <!--1.15废弃，没啥用，占用操作空间-->
-        <!--        <div class="drawer-setting-item">-->
-        <!--          <div class="drawer-setting-item-title"> 显示页脚 </div>-->
-        <!--          <div class="drawer-setting-item-action">-->
-        <!--            <n-switch v-model:value="settingStore.showFooter" />-->
-        <!--          </div>-->
-        <!--        </div>-->
+        <!-- 是否显示水印-->
+        <div class="drawer-setting-item">
+          <div class="drawer-setting-item-title"> 水印 </div>
+          <div class="drawer-setting-item-action">
+            <n-switch :value="settingStore.getWaterMark" @update:value="handleUpdateWaterMark" />
+          </div>
+        </div>
 
         <n-divider title-placement="center">动画</n-divider>
 
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 禁用动画 </div>
           <div class="drawer-setting-item-action">
-            <n-switch v-model:value="settingStore.isPageAnimate" />
+            <n-switch
+              :value="settingStore.getIsPageAnimate"
+              @update:value="handleUpdateDisabledAnimation"
+            />
           </div>
         </div>
 
         <div class="drawer-setting-item">
           <div class="drawer-setting-item-title"> 动画类型 </div>
           <div class="drawer-setting-item-select">
-            <n-select v-model:value="settingStore.pageAnimateType" :options="animateOptions" />
+            <n-select
+              :value="settingStore.getPageAnimateType"
+              :options="animateOptions"
+              @update:value="handleUpdateAnimationType"
+            />
           </div>
         </div>
-
-        <!-- <div class="drawer-setting-item">
-          <n-alert type="warning" :showIcon="false">
-            <p>{{ alertText }}</p>
-          </n-alert>
-        </div> -->
       </div>
     </n-drawer-content>
   </n-drawer>
@@ -237,7 +261,6 @@
   import { Moon, SunnySharp } from '@vicons/ionicons5';
   import { darkTheme } from 'naive-ui';
   import { animates as animateOptions } from '@/settings/animateSetting';
-  import { modifyVars } from 'less';
 
   export default defineComponent({
     name: 'ProjectSetting',
@@ -260,15 +283,13 @@
         title: props.title,
         isDrawer: false,
         placement: 'right',
-        alertText:
-          '该功能主要实时预览各种布局效果，更多完整配置在 projectSetting.ts 中设置，建议在生产环境关闭该布局预览功能。',
         appThemeList: designStore.appThemeList,
       });
 
       watch(
         () => designStore.darkTheme,
         (to) => {
-          settingStore.navTheme = to ? 'header-dark' : 'dark';
+          settingStore.setNavTheme(to ? 'header-dark' : 'dark');
         }
       );
 
@@ -285,23 +306,67 @@
       }
 
       function togNavTheme(theme) {
-        settingStore.navTheme = theme;
-        if (settingStore.navMode === 'horizontal' && ['light'].includes(theme)) {
-          settingStore.navTheme = 'dark';
+        if (settingStore.getNavTheme === theme) return;
+        settingStore.setNavTheme(theme);
+        if (settingStore.getNavMode === 'horizontal' && ['light'].includes(theme)) {
+          settingStore.setNavTheme('dark');
         }
       }
-
-      function togTheme(color) {
-        designStore.appTheme = color;
-        modifyVars({
-          '@primaryColor': color,
-        });
+      // 切换主题
+      function togTheme(color: string) {
+        if (designStore.getAppTheme === color) return;
+        designStore.setAppTheme(color);
       }
 
       function togNavMode(mode) {
-        settingStore.navMode = mode;
-        settingStore.menuSetting.mixMenu = false;
+        if (mode === settingStore.getNavMode) return;
+        settingStore.setNavMode(mode);
+        settingStore.setMixMenu(false);
       }
+      // 切换 暗黑模式
+      const handleChangeDarkMode = (val: boolean) => {
+        designStore.setDarkTheme(val);
+      };
+      // 是否 分割菜单
+      const handleUpdateMixMenu = (flag: boolean) => {
+        settingStore.setMixMenu(flag);
+      };
+      // 头部是否置顶
+      const handleUpdateFixedHeader = (flag: boolean) => {
+        settingStore.setFixedHeader(flag);
+      };
+      // 多页签 是否置顶
+      const handleUpdateTagsViewFixed = (flag: boolean) => {
+        settingStore.setFixedTagsView(flag);
+      };
+      // 是否显示重载按钮
+      const handleUpdateShowReload = (flag: boolean) => {
+        settingStore.setShowReload(flag);
+      };
+      // 面包屑 是否显示
+      const handleUpdateCrumbShow = (flag: boolean) => {
+        settingStore.setShowBreadCrumb(flag);
+      };
+      // 面包屑 图标是否显示
+      const handleUpdateCrumbShowIcon = (flag: boolean) => {
+        settingStore.setShowBreadCrumbIcon(flag);
+      };
+      // 多页签 是否显示
+      const handleUpdateTagsViewShow = (flag: boolean) => {
+        settingStore.setShowTagsView(flag);
+      };
+      //  更新是否水印
+      const handleUpdateWaterMark = (flag: boolean) => {
+        settingStore.setWaterMark(flag);
+      };
+      // 是否页面过渡动画
+      const handleUpdateDisabledAnimation = (flag: boolean) => {
+        settingStore.setDisabledAnimation(flag);
+      };
+      //  过渡动画类型切换
+      const handleUpdateAnimationType = (value: string) => {
+        settingStore.setAnimationType(value);
+      };
 
       return {
         ...toRefs(state),
@@ -315,6 +380,17 @@
         closeDrawer,
         animateOptions,
         directionsOptions,
+        handleChangeDarkMode,
+        handleUpdateFixedHeader,
+        handleUpdateTagsViewFixed,
+        handleUpdateShowReload,
+        handleUpdateCrumbShow,
+        handleUpdateCrumbShowIcon,
+        handleUpdateTagsViewShow,
+        handleUpdateMixMenu,
+        handleUpdateWaterMark,
+        handleUpdateDisabledAnimation,
+        handleUpdateAnimationType,
       };
     },
   });
