@@ -8,3 +8,15 @@ declare module 'virtual:*' {
   const result: any;
   export default result;
 }
+
+declare module 'element-resize-detector' {
+  type ResizeInstance = {
+    listenTo: (element: HTMLElement, handler: (...args: any[]) => void) => void;
+  };
+
+  const ResizeConstruct: {
+    (): ResizeInstance;
+  };
+
+  export default ResizeConstruct;
+}

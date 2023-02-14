@@ -1,14 +1,17 @@
 import { adminMenus } from '@/api/system/menu';
-import { constantRouterIcon } from './router-icons';
 import { RouteRecordRaw } from 'vue-router';
 import { Layout, ParentLayout } from '@/router/constant';
 import type { AppRouteRecordRaw } from '@/router/types';
+
+import { renderIcon } from '@/utils';
+import * as Icons from '@vicons/antd';
 
 const Iframe = () => import('@/views/iframe/index.vue');
 const LayoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 LayoutMap.set('LAYOUT', Layout);
 LayoutMap.set('IFRAME', Iframe);
+LayoutMap.set('ParentLayout'.toUpperCase(), ParentLayout);
 
 /**
  * 格式化 后端 结构信息并递归生成层级路由表
@@ -29,7 +32,7 @@ export const routerGenerator = (routerMap, parent?): any[] => {
       meta: {
         ...item.meta,
         label: item.meta.title,
-        icon: constantRouterIcon[item.meta.icon] || null,
+        icon: item.meta.icon ? renderIcon(Icons[item.meta.icon]) : null,
         permissions: item.meta.permissions || null,
       },
     };
@@ -82,7 +85,7 @@ export const asyncImportRoute = (routes: AppRouteRecordRaw[] | undefined): void 
     const { component, name } = item;
     const { children } = item;
     if (component) {
-      const layoutFound = LayoutMap.get(component as string);
+      const layoutFound = LayoutMap.get((component as string).toUpperCase());
       if (layoutFound) {
         item.component = layoutFound;
       } else {
