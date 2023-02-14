@@ -2,117 +2,236 @@
 <html lang="zh-cmn-Hans" id="htmlRoot" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
-  <meta content="webkit" name="renderer"/>
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+  <meta content="webkit" name="renderer" />
   <meta
     content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0"
     name="viewport"
   />
-  <link href="/favicon.ico" rel="icon"/>
+  <link href="/favicon.ico" rel="icon" />
   <title><%= title %></title>
 </head>
 <body>
 <div id="appProvider" style="display: none"></div>
 <div id="app">
   <style>
-    .first-loading-wrap {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .first-loading-wrap > h1 {
-      font-size: 128px
-    }
-
-    .first-loading-wrap .loading-wrap {
-      padding: 98px;
-      display: flex;
-      justify-content: center;
-      align-items: center
-    }
-
-    .dot {
-      animation: antRotate 1.2s infinite linear;
-      transform: rotate(45deg);
-      position: relative;
-      display: inline-block;
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      box-sizing: border-box
-    }
-
-    .dot i {
-      width: 14px;
-      height: 14px;
+    .loader-wrapper {
       position: absolute;
-      display: block;
-      background-color: #1890ff;
-      border-radius: 100%;
-      transform: scale(.75);
-      transform-origin: 50% 50%;
-      opacity: .3;
-      animation: antSpinMove 1s infinite linear alternate
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;  
+      justify-content: center;
+    }
+    html[data-theme="dark"] .loader-wrapper {
+      background-color: #515a6e;
+    }
+    .loader {
+      position: relative;
+      width: 75px;
+      height: 100px;
     }
 
-    .dot i:nth-child(1) {
-      top: 0;
-      left: 0
-    }
-
-    .dot i:nth-child(2) {
-      top: 0;
-      right: 0;
-      -webkit-animation-delay: .4s;
-      animation-delay: .4s
-    }
-
-    .dot i:nth-child(3) {
-      right: 0;
+    .loader__bar {
+      position: absolute;
       bottom: 0;
-      -webkit-animation-delay: .8s;
-      animation-delay: .8s
+      width: 10px;
+      height: 50%;
+      background: #0084f4;
+      transform-origin: center bottom;
     }
 
-    .dot i:nth-child(4) {
-      bottom: 0;
+    .loader__bar:nth-child(1) {
+      left: 0px;
+      transform: scale(1, 0.2);
+      animation: barUp1 4s infinite;
+    }
+
+    .loader__bar:nth-child(2) {
+      left: 15px;
+      transform: scale(1, 0.4);
+      animation: barUp2 4s infinite;
+    }
+
+    .loader__bar:nth-child(3) {
+      left: 30px;
+      transform: scale(1, 0.6);
+      animation: barUp3 4s infinite;
+    }
+
+    .loader__bar:nth-child(4) {
+      left: 45px;
+      transform: scale(1, 0.8);
+      animation: barUp4 4s infinite;
+    }
+
+    .loader__bar:nth-child(5) {
+      left: 60px;
+      transform: scale(1, 1);
+      animation: barUp5 4s infinite;
+    }
+
+    .loader__ball {
+      position: absolute;
+      bottom: 10px;
       left: 0;
-      -webkit-animation-delay: 1.2s;
-      animation-delay: 1.2s
+      width: 10px;
+      height: 10px;
+      background: #0084f4;
+      border-radius: 50%;
+      animation: ball 4s infinite;
     }
 
-    @keyframes antRotate {
-      to {
-        -webkit-transform: rotate(405deg);
-        transform: rotate(405deg)
+    @keyframes ball {
+      0% {
+        transform: translate(0, 0);
+      }
+      5% {
+        transform: translate(8px, -14px);
+      }
+      10% {
+        transform: translate(15px, -10px);
+      }
+      17% {
+        transform: translate(23px, -24px);
+      }
+      20% {
+        transform: translate(30px, -20px);
+      }
+      27% {
+        transform: translate(38px, -34px);
+      }
+      30% {
+        transform: translate(45px, -30px);
+      }
+      37% {
+        transform: translate(53px, -44px);
+      }
+      40% {
+        transform: translate(60px, -40px);
+      }
+      50% {
+        transform: translate(60px, 0);
+      }
+      57% {
+        transform: translate(53px, -14px);
+      }
+      60% {
+        transform: translate(45px, -10px);
+      }
+      67% {
+        transform: translate(37px, -24px);
+      }
+      70% {
+        transform: translate(30px, -20px);
+      }
+      77% {
+        transform: translate(22px, -34px);
+      }
+      80% {
+        transform: translate(15px, -30px);
+      }
+      87% {
+        transform: translate(7px, -44px);
+      }
+      90% {
+        transform: translate(0, -40px);
+      }
+      100% {
+        transform: translate(0, 0);
       }
     }
 
-    @-webkit-keyframes antRotate {
-      to {
-        -webkit-transform: rotate(405deg);
-        transform: rotate(405deg)
+    @keyframes barUp1 {
+      0% {
+        transform: scale(1, 0.2);
+      }
+      40% {
+        transform: scale(1, 0.2);
+      }
+      50% {
+        transform: scale(1, 1);
+      }
+      90% {
+        transform: scale(1, 1);
+      }
+      100% {
+        transform: scale(1, 0.2);
       }
     }
 
-    @keyframes antSpinMove {
-      to {
-        opacity: 1
+    @keyframes barUp2 {
+      0% {
+        transform: scale(1, 0.4);
+      }
+      40% {
+        transform: scale(1, 0.4);
+      }
+      50% {
+        transform: scale(1, 0.8);
+      }
+      90% {
+        transform: scale(1, 0.8);
+      }
+      100% {
+        transform: scale(1, 0.4);
       }
     }
 
-    @-webkit-keyframes antSpinMove {
-      to {
-        opacity: 1
+    @keyframes barUp3 {
+      0% {
+        transform: scale(1, 0.6);
       }
-    }</style>
-  <div class="first-loading-wrap">
-    <div class="loading-wrap">
-      <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
+      100% {
+        transform: scale(1, 0.6);
+      }
+    }
+
+    @keyframes barUp4 {
+      0% {
+        transform: scale(1, 0.8);
+      }
+      40% {
+        transform: scale(1, 0.8);
+      }
+      50% {
+        transform: scale(1, 0.4);
+      }
+      90% {
+        transform: scale(1, 0.4);
+      }
+      100% {
+        transform: scale(1, 0.8);
+      }
+    }
+
+    @keyframes barUp5 {
+      0% {
+        transform: scale(1, 1);
+      }
+      40% {
+        transform: scale(1, 1);
+      }
+      50% {
+        transform: scale(1, 0.2);
+      }
+      90% {
+        transform: scale(1, 0.2);
+      }
+      100% {
+        transform: scale(1, 1);
+      }
+    }
+  </style>
+  <div class="loader-wrapper">
+    <div class="loader" id="app-loader">
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__bar"></div>
+      <div class="loader__ball"></div>
     </div>
   </div>
 </div>

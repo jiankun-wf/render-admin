@@ -34,7 +34,7 @@
   import { AppProvider } from '@/components/Application';
   import { useDesignSettingStore } from '@/store/modules/designSetting';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
-  import { lighten } from '@/utils/index';
+  import { lighten } from '@/utils';
   import katex from 'katex';
   import hljs from 'highlight.js/lib/core';
   import typescript from 'highlight.js/lib/languages/typescript';

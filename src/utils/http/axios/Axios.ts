@@ -110,7 +110,7 @@ export class VAxios {
    * @description:  文件上传
    */
   uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
-    const formData = new window.FormData();
+    const formData = new FormData();
     const customFilename = params.name || 'file';
 
     if (params.filename) {

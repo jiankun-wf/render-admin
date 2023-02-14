@@ -7,7 +7,7 @@ import App from './App.vue';
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
 
-async function bootstrap() {
+async function loadApplication() {
   const app = createApp(App);
 
   // 挂载状态管理
@@ -38,4 +38,4 @@ async function bootstrap() {
   app.mount('#app', true);
 }
 
-void bootstrap();
+void loadApplication();

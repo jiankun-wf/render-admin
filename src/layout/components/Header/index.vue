@@ -139,7 +139,7 @@
   import { TABS_ROUTES } from '@/store/mutation-types';
   import { useUserStore } from '@/store/modules/user';
   import ProjectSetting from './ProjectSetting.vue';
-  import { AsideMenu } from '@/layout/components/Menu';
+  import { AsideMenu } from '@/layout/components/Menu/index.ts';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { websiteConfig } from '@/config/website.config';
 
