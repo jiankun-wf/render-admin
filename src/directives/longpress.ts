@@ -4,15 +4,19 @@
  */
 import type { Directive, DirectiveBinding } from 'vue';
 
+type StartEvent = MouseEvent | (TouchEvent & { button?: number });
+
 const directive: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     if (typeof binding.value !== 'function') {
       throw 'callback must be a function';
     }
+    // 触发时间
+    const delay = Number(binding.arg || 600);
     // 定义变量
     let pressTimer: any = null;
-    // 创建计时器（ 2秒后执行函数 ）
-    const start = (e: any) => {
+    // 创建计时器（delay毫秒后执行函数）
+    const start = (e: StartEvent) => {
       if (e.button) {
         if (e.type === 'click' && e.button !== 0) {
           return;
@@ -21,7 +25,7 @@ const directive: Directive = {
       if (pressTimer === null) {
         pressTimer = setTimeout(() => {
           handler(e);
-        }, 1000);
+        }, delay);
       }
     };
     // 取消计时器

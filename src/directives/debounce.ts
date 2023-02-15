@@ -5,27 +5,39 @@
  */
 import type { Directive, DirectiveBinding } from 'vue';
 interface ElType extends HTMLElement {
-  __handleClick__: () => any;
+  __eventHandler__: () => any;
 }
 const debounce: Directive = {
   mounted(el: ElType, binding: DirectiveBinding) {
-    if (typeof binding.value !== 'function') {
+    const { value, modifiers, arg } = binding;
+    if (typeof value !== 'function') {
       throw 'callback must be a function';
     }
-    const delay = Number(binding.arg || 300);
+    const delay = Number(arg || 300);
     let timer: NodeJS.Timeout | null = null;
-    el.__handleClick__ = function () {
+    el.__eventHandler__ = function () {
       if (timer) {
         clearInterval(timer);
       }
       timer = setTimeout(() => {
-        binding.value();
+        value();
       }, delay);
     };
-    el.addEventListener('click', el.__handleClick__);
+    const eventNames = new Set(Object.keys(modifiers));
+    eventNames.forEach((eventName) => {
+      if (modifiers[eventName] === true) {
+        el.addEventListener(eventName, el.__eventHandler__);
+      }
+    });
   },
-  beforeUnmount(el: ElType) {
-    el.removeEventListener('click', el.__handleClick__);
+  beforeUnmount(el: ElType, binding: DirectiveBinding) {
+    const { modifiers } = binding;
+    const eventNames = new Set(Object.keys(modifiers));
+    eventNames.forEach((eventName) => {
+      if (modifiers[eventName] === true) {
+        el.removeEventListener(eventName, el.__eventHandler__);
+      }
+    });
   },
 };
 
