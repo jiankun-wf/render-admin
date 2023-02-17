@@ -3,7 +3,7 @@ import 'katex/dist/katex.css';
 
 import { createApp } from 'vue';
 import { setupNaiveDiscreteApi, setupNaive, setupDirectives } from '@/plugins';
-import App from './App.vue';
+import App from './App';
 import router, { setupRouter } from './router';
 import { setupStore } from '@/store';
 

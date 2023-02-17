@@ -4,12 +4,12 @@ import type { GridProps, GridItemProps } from 'naive-ui/lib/grid';
 import type { ButtonProps } from 'naive-ui/lib/button';
 import type { FormItemRule } from 'naive-ui/lib/form';
 
-export interface FormSchema {
+export interface FormSchema<DefaultValue = any> {
   field: string;
   label: string;
   labelMessage?: string;
   labelMessageStyle?: object | string;
-  defaultValue?: any;
+  defaultValue?: DefaultValue;
   component?: ComponentType;
   componentProps?: Recordable;
   slot?: string;

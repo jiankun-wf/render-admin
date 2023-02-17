@@ -55,7 +55,7 @@ const routes: Array<RouteRecordRaw> = [
           keepAlive: true,
           permissions: ['dashboard_workplace'],
         },
-        component: () => import('@/views/dashboard/workplace/workplace.vue'),
+        component: () => import('@/views/dashboard/workplace/index'),
       },
     ],
   },
