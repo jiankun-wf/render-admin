@@ -22,6 +22,7 @@ const WorkPlaceRoute = defineComponent({
     const handlePressClick = () => {
       console.log('longpress click');
     };
+
     const renderLonePressButton = () => {
       const longPress = resolveDirective('press');
       return withDirectives(
