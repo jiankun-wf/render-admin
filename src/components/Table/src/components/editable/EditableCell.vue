@@ -50,7 +50,7 @@
   import { set, omit } from 'lodash-es';
   import { EventEnum } from '@/components/Table/src/componentMap';
 
-  import { parseISO, format } from 'date-fns';
+  import dayjs from 'dayjs';
 
   export default defineComponent({
     name: 'EditableCell',
@@ -115,13 +115,13 @@
             if (compProps.valueFormat) {
               valueField = 'formatted-value';
             } else {
-              value = parseISO(value as any).getTime();
+              value = dayjs(value).valueOf();
             }
           } else if (isArray(value)) {
             if (compProps.valueFormat) {
               valueField = 'formatted-value';
             } else {
-              value = value.map((item) => parseISO(item).getTime());
+              value = value.map((item) => dayjs(item).valueOf());
             }
           }
         }
@@ -205,12 +205,12 @@
         if (component === 'NDatePicker') {
           if (isNumber(currentValueRef.value)) {
             if (compProps.valueFormat) {
-              currentValueRef.value = format(currentValueRef.value, compProps.valueFormat);
+              currentValueRef.value = dayjs(currentValueRef.value).format(compProps.valueFormat);
             }
           } else if (isArray(currentValueRef.value)) {
             if (compProps.valueFormat) {
               currentValueRef.value = currentValueRef.value.map((item) => {
-                format(item, compProps.valueFormat);
+                dayjs(item).format(compProps.valueFormat);
               });
             }
           }

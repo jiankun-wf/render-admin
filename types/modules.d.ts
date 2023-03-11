@@ -20,3 +20,7 @@ declare module 'element-resize-detector' {
 
   export default ResizeConstruct;
 }
+
+declare module 'uuid' {
+  export const v4: () => string;
+}

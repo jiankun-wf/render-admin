@@ -48,7 +48,7 @@ export interface FormProps {
 export interface FormActionType {
   submit: () => Promise<any>;
   setProps: (formProps: Partial<FormProps>) => Promise<void>;
-  setFieldsValue: (values: Recordable) => Promise<void>;
+  setFieldsValue: <T = Recordable>(values: T) => Promise<void>;
   clearValidate: (name?: string | string[]) => Promise<void>;
   getFieldsValue: () => Recordable;
   resetFields: () => Promise<void>;

@@ -16,7 +16,6 @@ import katex from 'katex';
 import hljs from 'highlight.js/lib/core';
 import typescript from 'highlight.js/lib/languages/typescript';
 hljs.registerLanguage('typescript', typescript);
-
 import './styles/index.less';
 import { RouterView } from 'vue-router';
 const App = defineComponent({

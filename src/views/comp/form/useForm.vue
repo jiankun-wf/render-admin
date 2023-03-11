@@ -6,9 +6,7 @@
     <n-card :bordered="false" class="mt-4 proCard">
       <div class="BasicForm">
         <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-          <template #statusSlot="{ model, field }">
-            <n-input v-model:value="model[field]" />
-          </template>
+          <template #header> 123 </template>
         </BasicForm>
       </div>
     </n-card>
@@ -16,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { BasicForm, FormSchema, useForm } from '@/components/BasicForm/index';
   import { useMessage } from 'naive-ui';
 
   const schemas: FormSchema[] = [
@@ -173,6 +171,10 @@
     layout: 'horizontal',
     submitButtonText: '提交预约',
     schemas,
+    showLabel: true,
+    labelPlacement: 'top',
+    inline: false,
+    size: 'medium',
   });
 
   function handleSubmit(values: Recordable) {

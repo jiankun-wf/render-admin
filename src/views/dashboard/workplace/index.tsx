@@ -1,6 +1,7 @@
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import { NAlert, NButton, NSpace } from 'naive-ui';
 import { withDirectives, resolveDirective } from 'vue';
+import { formatToDateTime } from '@/utils/dateUtil';
 
 const WorkPlaceRoute = defineComponent({
   name: 'WorkPlaceRoute',
@@ -48,6 +49,10 @@ const WorkPlaceRoute = defineComponent({
         [[longPress, handlePressClick, '500']]
       );
     };
+
+    onMounted(() => {
+      console.log(formatToDateTime(Date.now()));
+    });
 
     return () => (
       <div>
