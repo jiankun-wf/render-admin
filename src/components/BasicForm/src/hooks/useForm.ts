@@ -3,7 +3,7 @@ import { FormProps } from '../types';
 import { gerRawProps } from '../helper';
 import { FormActionType } from '../types/formAction';
 
-export const useForm = (props?: FormProps) => {
+export const useForm = (props?: FormProps): [any, FormActionType] => {
   const formInstance = ref<FormActionType | null>();
 
   const isLoaded = ref(false);
@@ -46,6 +46,10 @@ export const useForm = (props?: FormProps) => {
     setProps: async (props: Partial<FormProps>) => {
       const form = await getForm();
       form?.setProps(props);
+    },
+    setLoading: async (flag: boolean) => {
+      const form = await getForm();
+      form?.setLoading(flag);
     },
   };
 

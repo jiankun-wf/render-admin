@@ -1,13 +1,13 @@
 import { ButtonProps, GridItemProps, GridProps } from 'naive-ui';
 import { FormSchema } from '../types';
 import { PropType, CSSProperties } from 'vue';
-import { FormSize } from '../types/Rule';
+import { FormSize, LabelPlacement, RequiredMarkPlacement } from '../types/Rule';
 
 export const BasicFormPorps = {
   // 标签宽度  固定宽度
   labelWidth: {
     type: [Number, String] as PropType<number | string>,
-    default: 80,
+    default: 'auto',
   },
   // 表单配置规则
   schemas: {
@@ -31,7 +31,7 @@ export const BasicFormPorps = {
   },
   //标签位置
   labelPlacement: {
-    type: String,
+    type: String as PropType<LabelPlacement>,
     default: 'left',
   },
   //是否显示操作按钮（查询/重置）
@@ -98,5 +98,14 @@ export const BasicFormPorps = {
   collapsedRows: {
     type: Number,
     default: 1,
+  },
+
+  loading: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
+  requireMarkPlacement: {
+    type: String as PropType<RequiredMarkPlacement>,
+    default: 'left',
   },
 };

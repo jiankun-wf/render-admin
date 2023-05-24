@@ -2,20 +2,22 @@ import { defineComponent, onMounted } from 'vue';
 import { NAlert, NButton, NSpace } from 'naive-ui';
 import { withDirectives, resolveDirective } from 'vue';
 import { formatToDateTime } from '@/utils/dateUtil';
+import { useMessage } from 'naive-ui';
 
 const WorkPlaceRoute = defineComponent({
   name: 'WorkPlaceRoute',
   setup() {
+    const message = useMessage();
     const handleDebounceClick = () => {
-      console.log('debounce click');
+      message.success('debounce click');
     };
 
     const handleThrottleClick = () => {
-      console.log('throttle click');
+      message.success('throttle click');
     };
 
     const handlePressClick = () => {
-      console.log('longpress click');
+      message.success('longpress click');
     };
 
     const renderDebounceButton = () => {
@@ -36,7 +38,7 @@ const WorkPlaceRoute = defineComponent({
         <NButton type="primary">
           <span>节流测试</span>
         </NButton>,
-        [[throttle, handleThrottleClick, '500', { click: true }]]
+        [[throttle, handleThrottleClick, '1000', { click: true }]]
       );
     };
 

@@ -9,4 +9,5 @@ export interface FormActionType {
   resetFields?: () => Promise<void>;
   validate?: (nameList?: any[]) => Promise<any>;
   updateSchema?: () => Promise<void>;
+  setLoading: (flag: boolean) => Promise<void>;
 }

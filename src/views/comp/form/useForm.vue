@@ -6,7 +6,9 @@
     <n-card :bordered="false" class="mt-4 proCard">
       <div class="BasicForm">
         <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-          <template #header> 123 </template>
+          <template #header>
+            <div class="mb-3 text-xl text-center">我是头部呀</div>
+          </template>
         </BasicForm>
       </div>
     </n-card>
@@ -16,31 +18,31 @@
 <script lang="ts" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/BasicForm/index';
   import { useMessage } from 'naive-ui';
+  // import { onMounted } from 'vue';
 
   const schemas: FormSchema[] = [
     {
       field: 'name',
-      component: 'NInput',
+      component: 'Input',
       label: '姓名',
-      labelMessage: '这是一个提示',
-      giProps: {
-        span: 1,
-      },
+      helpMessage: '这是一个提示',
+      colProps: { span: 1 },
       componentProps: {
         placeholder: '请输入姓名',
         onInput: (e: any) => {
           console.log(e);
         },
       },
-      rules: [{ required: true, message: '请输入姓名', trigger: ['blur'] }],
+      rule: [{ required: true, message: '请输入姓名', trigger: ['blur'] }],
     },
     {
       field: 'mobile',
-      component: 'NInputNumber',
+      component: 'InputNumber',
       label: '手机',
       componentProps: {
         placeholder: '请输入手机号码',
         showButton: false,
+        style: { width: '100%' },
         onInput: (e: any) => {
           console.log(e);
         },
@@ -48,11 +50,9 @@
     },
     {
       field: 'type',
-      component: 'NSelect',
+      component: 'Select',
       label: '类型',
-      giProps: {
-        //span: 24,
-      },
+      colProps: { span: 1 },
       componentProps: {
         placeholder: '请选择类型',
         options: [
@@ -72,12 +72,9 @@
     },
     {
       field: 'makeDate',
-      component: 'NDatePicker',
+      component: 'Rate',
       label: '预约时间',
-      giProps: {
-        //span: 24,
-      },
-      defaultValue: 1183135260000,
+      defaultValue: 4,
       componentProps: {
         type: 'date',
         clearable: true,
@@ -85,96 +82,32 @@
           console.log(e);
         },
       },
-    },
-    {
-      field: 'makeTime',
-      component: 'NTimePicker',
-      label: '停留时间',
-      giProps: {
-        //span: 24,
-      },
-      componentProps: {
-        clearable: true,
-        onUpdateValue: (e: any) => {
-          console.log(e);
-        },
+      ifShow: ({ values }) => {
+        return values.type === 1;
       },
     },
     {
-      field: 'makeProject',
-      component: 'NCheckbox',
-      label: '预约项目',
-      giProps: {
-        //span: 24,
-      },
-      componentProps: {
-        placeholder: '请选择预约项目',
-        options: [
-          {
-            label: '种牙',
-            value: 1,
-          },
-          {
-            label: '补牙',
-            value: 2,
-          },
-          {
-            label: '根管',
-            value: 3,
-          },
-        ],
-        onUpdateChecked: (e: any) => {
-          console.log(e);
-        },
-      },
-    },
-    {
-      field: 'makeSource',
-      component: 'NRadioGroup',
-      label: '来源',
-      giProps: {
-        //span: 24,
-      },
-      componentProps: {
-        options: [
-          {
-            label: '网上',
-            value: 1,
-          },
-          {
-            label: '门店',
-            value: 2,
-          },
-        ],
-        onUpdateChecked: (e: any) => {
-          console.log(e);
-        },
-      },
-    },
-    {
-      field: 'status',
-      label: '状态',
-      giProps: {
-        //span: 24,
-      },
-      //插槽
-      slot: 'statusSlot',
+      field: 'test',
+      component: 'ColorPicker',
+      label: '颜色测试',
+      defaultValue: '#FFFFFF',
+      colProps: { span: 1 },
     },
   ];
 
   const message = useMessage();
 
-  const [register, {}] = useForm({
-    gridProps: { cols: 1 },
+  const [register, { setLoading: _ }] = useForm({
+    gridProps: { cols: 2, xGap: 10 },
     collapsedRows: 3,
-    labelWidth: 120,
+    labelWidth: 'auto',
     layout: 'horizontal',
     submitButtonText: '提交预约',
     schemas,
     showLabel: true,
-    labelPlacement: 'top',
+    labelPlacement: 'left',
     inline: false,
-    size: 'medium',
+    size: 'small',
   });
 
   function handleSubmit(values: Recordable) {
@@ -189,7 +122,7 @@
 
 <style lang="less" scoped>
   .BasicForm {
-    width: 550px;
+    width: 755px;
     margin: 0 auto;
     overflow: hidden;
     padding-top: 20px;
