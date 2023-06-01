@@ -1,4 +1,4 @@
-## geetype-admin
+## render-admin
 
 ## geetype.cn 后台管理用的  模板
 
