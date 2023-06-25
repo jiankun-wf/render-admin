@@ -38,7 +38,7 @@ const WorkPlaceRoute = defineComponent({
         <NButton type="primary">
           <span>节流测试</span>
         </NButton>,
-        [[throttle, handleThrottleClick, '1000', { click: true }]]
+        [[throttle, handleThrottleClick, '1000', { click: true }]] // v-throttle:1000.click="handleThrottleClick"
       );
     };
 

@@ -1,7 +1,5 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from '/#/router';
 import { Layout } from '@/router/constant';
-import { LogoWebComponent } from '@vicons/ionicons5';
-import { renderIcon } from '@/utils/index';
 
 const route: RouteRecordRaw[] = [
   {
@@ -11,7 +9,8 @@ const route: RouteRecordRaw[] = [
     meta: {
       title: 'naive-ui在线',
       sort: 9,
-      icon: renderIcon(LogoWebComponent),
+      icon: 'LogoWebComponent',
+      alwaysShow: false,
     },
   },
 ];

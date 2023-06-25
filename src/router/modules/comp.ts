@@ -25,6 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '组件示例',
       icon: renderIcon(WalletOutlined),
+      alwaysShow: false,
       sort: 8,
     },
     children: [

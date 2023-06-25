@@ -1,7 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
-import { ProjectOutlined } from '@vicons/antd';
-import { renderIcon } from '@/utils/index';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
       sort: 10,
       isRoot: true,
       activeMenu: 'about_index',
-      icon: renderIcon(ProjectOutlined),
+      icon: 'ProjectOutlined',
     },
     children: [
       {

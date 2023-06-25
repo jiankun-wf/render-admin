@@ -18,6 +18,9 @@ module.exports = {
           DEFAULT: '#0960bd',
           // dark: primaryColorDark,
         },
+        hovered: {
+          bg: 'rgb(243, 243, 245)',
+        },
         secondary: '#666',
         main: '#333',
         placeholder: '#999',

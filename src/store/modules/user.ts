@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 import { ACCESS_TOKEN, CURRENT_USER } from '@/store/mutation-types';
-import { ResultEnum } from '@/enums/httpEnum';
-
 import { getUserInfo, login } from '@/api/system/user';
 import { storage } from '@/utils/Storage';
 
@@ -10,7 +8,7 @@ export interface IUserState {
   token: string;
   username: string;
   welcome: string;
-  avatar: string;
+  avatar?: string;
   permissions: any[];
   info: any;
 }
@@ -29,7 +27,7 @@ export const useUserStore = defineStore({
     getToken(): string {
       return this.token;
     },
-    getAvatar(): string {
+    getAvatar(): string | undefined {
       return this.avatar;
     },
     getNickname(): string {
@@ -46,11 +44,14 @@ export const useUserStore = defineStore({
     setToken(token: string) {
       this.token = token;
     },
-    setAvatar(avatar: string) {
+    setAvatar(avatar?: string) {
       this.avatar = avatar;
     },
     setPermissions(permissions) {
       this.permissions = permissions;
+    },
+    setUserName(name: string) {
+      this.username = name;
     },
     setUserInfo(info) {
       this.info = info;
@@ -59,14 +60,10 @@ export const useUserStore = defineStore({
     async login(userInfo) {
       try {
         const response = await login(userInfo);
-        const { result, code } = response;
-        if (code === ResultEnum.SUCCESS) {
-          const ex = 7 * 24 * 60 * 60;
-          storage.set(ACCESS_TOKEN, result.token, ex);
-          storage.set(CURRENT_USER, result, ex);
-          this.setToken(result.token);
-          this.setUserInfo(result);
-        }
+        const { expired, token } = response;
+        const ex = expired ?? 7 * 24 * 60 * 60;
+        storage.set(ACCESS_TOKEN, token, ex);
+        this.setToken(token);
         return Promise.resolve(response);
       } catch (e) {
         return Promise.reject(e);
@@ -80,15 +77,13 @@ export const useUserStore = defineStore({
       return new Promise((resolve, reject) => {
         getUserInfo()
           .then((res) => {
-            const result = res;
-            if (result.permissions && result.permissions.length) {
-              const permissionsList = result.permissions;
+            const { permissionsList, avatar, userNickName } = res;
+            if (permissionsList && permissionsList) {
               that.setPermissions(permissionsList);
-              that.setUserInfo(result);
-            } else {
-              reject(new Error('getInfo: permissionsList must be a non-null array !'));
             }
-            that.setAvatar(result.avatar);
+            that.setUserInfo(res);
+            that.setAvatar(avatar);
+            that.setUserName(userNickName);
             resolve(res);
           })
           .catch((error) => {

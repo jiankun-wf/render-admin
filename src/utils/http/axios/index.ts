@@ -60,8 +60,8 @@ const transform: AxiosTransform = {
       // return '[HTTP] Request has no return value';
       throw new Error('请求出错，请稍候重试');
     }
-    //  这里 code，result，message为 后台统一的字段，需要修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    //  这里 code，data，message为 后台统一的字段，需要修改为项目自己的接口返回格式
+    const { code, message } = data;
     // 请求成功
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
     // 是否显示提示信息
@@ -88,7 +88,7 @@ const transform: AxiosTransform = {
 
     // 接口请求成功，直接返回结果
     if (code === ResultEnum.SUCCESS) {
-      return result;
+      return data.data;
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
     let errorMsg = message;
@@ -180,7 +180,7 @@ const transform: AxiosTransform = {
     const token = userStore.getToken;
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
+      (config as Recordable).headers['WI-FONT-AUTHENTICATE'] = options.authenticationScheme
         ? `${options.authenticationScheme} ${token}`
         : token;
     }

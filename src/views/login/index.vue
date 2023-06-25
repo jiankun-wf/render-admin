@@ -65,13 +65,14 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useUserStore } from '@/store/modules/user';
   import { useMessage } from 'naive-ui';
-  import { ResultEnum } from '@/enums/httpEnum';
-  import { PersonOutline, LockClosedOutline } from '@vicons/ionicons5';
   import { PageEnum } from '@/enums/pageEnum';
   import { websiteConfig } from '@/config/website.config';
+  import FingerprintJS from '@fingerprintjs/fingerprintjs';
+  import { encryptByAES } from '@/utils/encryp';
   interface FormState {
-    username: string;
+    userName: string;
     password: string;
+    device: string;
   }
 
   const formRef = ref();
@@ -82,7 +83,7 @@
 
   const formInline = reactive({
     username: 'admin',
-    password: '',
+    password: '123456',
     isCaptcha: true,
   });
 
@@ -96,6 +97,13 @@
   const router = useRouter();
   const route = useRoute();
 
+  const getVisitorId = async () => {
+    const fpPromise = FingerprintJS.load();
+    const fp = await fpPromise;
+    const result = await fp.get();
+    return result.visitorId;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     formRef.value.validate(async (errors) => {
@@ -104,23 +112,22 @@
         message.loading('登录中...');
         loading.value = true;
 
+        const device = await getVisitorId();
+
         const params: FormState = {
-          username,
-          password,
+          userName: username,
+          password: encryptByAES(password),
+          device: encryptByAES(device),
         };
 
         try {
-          const { code, message: msg } = await userStore.login(params);
+          await userStore.login(params);
           message.destroyAll();
-          if (code == ResultEnum.SUCCESS) {
-            const toPath = decodeURIComponent((route.query?.redirect || '/') as string);
-            message.success('登录成功，即将进入系统');
-            if (route.name === LOGIN_NAME) {
-              router.replace('/');
-            } else router.replace(toPath);
-          } else {
-            message.info(msg || '登录失败');
-          }
+          const toPath = decodeURIComponent((route.query?.redirect || '/') as string);
+
+          if (route.name === LOGIN_NAME) {
+            router.replace('/');
+          } else router.replace(toPath);
         } finally {
           loading.value = false;
         }

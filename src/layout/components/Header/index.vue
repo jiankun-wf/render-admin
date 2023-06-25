@@ -70,270 +70,95 @@
         </template>
       </n-breadcrumb>
     </div>
-    <div class="layout-header-right">
-      <div
-        class="layout-header-trigger layout-header-trigger-min"
-        v-for="item in iconList"
-        :key="item.icon"
-      >
-        <n-tooltip placement="bottom">
-          <template #trigger>
-            <n-icon size="18">
-              <component :is="item.icon" v-on="item.eventObject || {}" />
-            </n-icon>
-          </template>
-          <span>{{ item.tips }}</span>
-        </n-tooltip>
-      </div>
-      <!--切换全屏-->
-      <div class="layout-header-trigger layout-header-trigger-min">
-        <n-tooltip placement="bottom">
-          <template #trigger>
-            <n-icon size="18">
-              <component :is="fullscreenIcon" @click="toggleFullScreen" />
-            </n-icon>
-          </template>
-          <span>全屏</span>
-        </n-tooltip>
-      </div>
-      <!-- 个人中心 -->
-      <div class="layout-header-trigger layout-header-trigger-min">
-        <n-dropdown
-          trigger="hover"
-          @select="avatarSelect"
-          :show-arrow="true"
-          :options="avatarOptions"
-        >
-          <div class="avatar">
-            <n-avatar round>
-              {{ username }}
-              <template #icon>
-                <UserOutlined />
-              </template>
-            </n-avatar>
-          </div>
-        </n-dropdown>
-      </div>
-      <!--设置-->
-      <div class="layout-header-trigger layout-header-trigger-min" @click="openSetting">
-        <n-tooltip placement="bottom-end">
-          <template #trigger>
-            <n-icon size="18" style="font-weight: bold">
-              <SettingOutlined />
-            </n-icon>
-          </template>
-          <span>项目配置</span>
-        </n-tooltip>
-      </div>
+    <div class="flex items-center gap-3 layout-header-right">
+      <FullScreen />
+
+      <UserDropDown />
+      <ProjectSettingTrigger />
     </div>
   </div>
-  <!--项目配置-->
-  <ProjectSetting ref="drawerSetting" />
 </template>
 
-<script lang="ts">
-  import { defineComponent, reactive, toRefs, ref, computed, unref } from 'vue';
+<script lang="ts" setup>
+  import { reactive, toRefs, computed, unref } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import components from './components';
-  import { NDialogProvider, useDialog, useMessage } from 'naive-ui';
-  import { TABS_ROUTES } from '@/store/mutation-types';
-  import { useUserStore } from '@/store/modules/user';
-  import ProjectSetting from './ProjectSetting.vue';
-  import { AsideMenu } from '@/layout/components/Menu/index.ts';
+  import { MenuFoldOutlined, MenuUnfoldOutlined, ReloadOutlined } from '@vicons/antd';
+  import { AsideMenu } from '@/layout/components/Menu';
+  import { FullScreen, ProjectSettingTrigger, UserDropDown } from './utils';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { websiteConfig } from '@/config/website.config';
 
-  export default defineComponent({
-    name: 'PageHeader',
-    components: { ...components, NDialogProvider, ProjectSetting, AsideMenu },
-    props: {
-      collapsed: {
-        type: Boolean,
-      },
-      inverted: {
-        type: Boolean,
-      },
-    },
-    emits: ['update:collapsed'],
-    setup(props, { emit }) {
-      const userStore = useUserStore();
-      const message = useMessage();
-      const dialog = useDialog();
-      const { getNavMode, getNavTheme, getHeaderSetting, getMenuSetting, getCrumbsSetting } =
-        useProjectSetting();
+  const props = defineProps<{
+    collapsed: boolean;
+    inverted: boolean;
+  }>();
 
-      const { username } = userStore?.info || {};
+  const emit = defineEmits<{
+    (e: 'update:collapsed', collapsed: boolean);
+  }>();
 
-      const drawerSetting = ref();
+  const { getNavMode, getNavTheme, getHeaderSetting, getMenuSetting, getCrumbsSetting } =
+    useProjectSetting();
 
-      const state = reactive({
-        username: username || '',
-        fullscreenIcon: 'FullscreenOutlined',
-        navMode: getNavMode,
-        navTheme: getNavTheme,
-        headerSetting: getHeaderSetting,
-        crumbsSetting: getCrumbsSetting,
-      });
+  const { navMode, headerSetting, crumbsSetting } = toRefs(
+    reactive({
+      navMode: getNavMode,
+      headerSetting: getHeaderSetting,
+      crumbsSetting: getCrumbsSetting,
+    })
+  );
 
-      const getInverted = computed(() => {
-        const navTheme = unref(getNavTheme);
-        return ['light', 'header-dark'].includes(navTheme) ? props.inverted : !props.inverted;
-      });
-
-      const mixMenu = computed(() => {
-        return unref(getMenuSetting).mixMenu;
-      });
-
-      const getChangeStyle = computed(() => {
-        const { collapsed } = props;
-        const { minMenuWidth, menuWidth }: any = unref(getMenuSetting);
-        return {
-          left: collapsed ? `${minMenuWidth}px` : `${menuWidth}px`,
-          width: `calc(100% - ${collapsed ? `${minMenuWidth}px` : `${menuWidth}px`})`,
-        };
-      });
-
-      const getMenuLocation = computed(() => {
-        return 'header';
-      });
-
-      const router = useRouter();
-      const route = useRoute();
-
-      const generator: any = (routerMap) => {
-        return routerMap.map((item) => {
-          const currentMenu = {
-            ...item,
-            label: item.meta.title,
-            key: item.name,
-            disabled: item.path === '/',
-          };
-          // 是否有子菜单，并递归处理
-          if (item.children && item.children.length > 0) {
-            // Recursion
-            currentMenu.children = generator(item.children, currentMenu);
-          }
-          return currentMenu;
-        });
-      };
-
-      const breadcrumbList = computed(() => {
-        return generator(route.matched);
-      });
-
-      const dropdownSelect = (key) => {
-        router.push({ name: key });
-      };
-
-      // 刷新页面
-      const reloadPage = () => {
-        router.push({
-          path: '/redirect' + unref(route).fullPath,
-        });
-      };
-
-      // 退出登录
-      const doLogout = () => {
-        dialog.info({
-          title: '提示',
-          content: '您确定要退出登录吗',
-          positiveText: '确定',
-          negativeText: '取消',
-          onPositiveClick: () => {
-            userStore.logout().then(() => {
-              message.success('成功退出登录');
-              // 移除标签页
-              localStorage.removeItem(TABS_ROUTES);
-              router
-                .replace({
-                  name: 'Login',
-                  query: {
-                    redirect: route.fullPath,
-                  },
-                })
-                .finally(() => location.reload());
-            });
-          },
-          onNegativeClick: () => {},
-        });
-      };
-
-      // 切换全屏图标
-      const toggleFullscreenIcon = () =>
-        (state.fullscreenIcon =
-          document.fullscreenElement !== null ? 'FullscreenExitOutlined' : 'FullscreenOutlined');
-
-      // 监听全屏切换事件
-      document.addEventListener('fullscreenchange', toggleFullscreenIcon);
-
-      // 全屏切换
-      const toggleFullScreen = () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen();
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
-        }
-      };
-
-      // 图标列表
-      const iconList = [];
-      const avatarOptions = [
-        {
-          label: '个人设置',
-          key: 1,
-        },
-        {
-          label: '退出登录',
-          key: 2,
-        },
-      ];
-
-      //头像下拉菜单
-      const avatarSelect = (key) => {
-        switch (key) {
-          case 1:
-            router.push({ name: 'Setting' });
-            break;
-          case 2:
-            doLogout();
-            break;
-        }
-      };
-
-      const handleUpdateCollapsed = (flag: boolean) => {
-        debugger;
-        emit('update:collapsed', flag);
-      };
-
-      function openSetting() {
-        const { openDrawer } = drawerSetting.value;
-        openDrawer();
-      }
-
-      return {
-        ...toRefs(state),
-        iconList,
-        toggleFullScreen,
-        doLogout,
-        route,
-        dropdownSelect,
-        avatarOptions,
-        getChangeStyle,
-        avatarSelect,
-        breadcrumbList,
-        reloadPage,
-        drawerSetting,
-        openSetting,
-        getInverted,
-        getMenuLocation,
-        mixMenu,
-        websiteConfig,
-        handleUpdateCollapsed,
-      };
-    },
+  const getInverted = computed(() => {
+    const navTheme = unref(getNavTheme);
+    return ['light', 'header-dark'].includes(navTheme) ? props.inverted : !props.inverted;
   });
+
+  const mixMenu = computed(() => {
+    return unref(getMenuSetting).mixMenu;
+  });
+
+  const getMenuLocation = computed(() => {
+    return 'header';
+  });
+
+  const router = useRouter();
+  const route = useRoute();
+
+  const generator: any = (routerMap) => {
+    return routerMap.map((item) => {
+      const currentMenu = {
+        ...item,
+        label: item.meta.title,
+        key: item.name,
+        disabled: item.path === '/',
+      };
+      // 是否有子菜单，并递归处理
+      if (item.children && item.children.length > 0) {
+        // Recursion
+        currentMenu.children = generator(item.children, currentMenu);
+      }
+      return currentMenu;
+    });
+  };
+
+  const breadcrumbList = computed(() => {
+    return generator(route.matched);
+  });
+
+  const dropdownSelect = (key) => {
+    router.push({ name: key });
+  };
+
+  // 刷新页面
+  const reloadPage = () => {
+    router.push({
+      path: '/redirect' + unref(route).fullPath,
+    });
+  };
+
+  const handleUpdateCollapsed = (flag: boolean) => {
+    emit('update:collapsed', flag);
+  };
 </script>
 
 <style lang="less" scoped>
@@ -386,44 +211,17 @@
       }
     }
 
-    &-right {
-      display: flex;
-      align-items: center;
-      margin-right: 20px;
-
-      .avatar {
-        display: flex;
-        align-items: center;
-        height: 64px;
-      }
-
-      > * {
-        cursor: pointer;
-      }
-    }
-
     &-trigger {
       display: inline-block;
-      width: 64px;
-      height: 64px;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
 
-      .n-icon {
-        display: flex;
-        align-items: center;
-        height: 64px;
-        line-height: 64px;
-      }
-
       &:hover {
         background: hsla(0, 0%, 100%, 0.08);
-      }
-
-      .anticon {
-        font-size: 16px;
-        color: #515a6e;
       }
     }
 
@@ -461,12 +259,4 @@
     left: 200px;
     z-index: 11;
   }
-
-  //::v-deep(.menu-router-link) {
-  //  color: #515a6e;
-  //
-  //  &:hover {
-  //    color: #1890ff;
-  //  }
-  //}
 </style>

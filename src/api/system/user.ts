@@ -3,7 +3,7 @@ import { http } from '@/utils/http/axios';
 export interface BasicResponseModel<T = any> {
   code: number;
   message: string;
-  result: T;
+  data: T;
 }
 
 export interface BasicPageParams {
@@ -12,30 +12,34 @@ export interface BasicPageParams {
   total: number;
 }
 
+export interface UserInfo {
+  userNickName: string;
+  userName: string;
+  id: string;
+  permissionsList: string[];
+  avatar?: string;
+  [key: string]: any;
+}
+
 /**
  * @description: 获取用户信息
  */
 export function getUserInfo() {
-  return http.request({
-    url: '/admin_info',
-    method: 'get',
+  return http.request<UserInfo>({
+    url: '/wi-font/web/admin-user/user-info',
+    method: 'GET',
   });
 }
 
 /**
  * @description: 用户登录
  */
-export function login(params) {
-  return http.request<BasicResponseModel>(
-    {
-      url: '/login',
-      method: 'POST',
-      params,
-    },
-    {
-      isTransformResponse: false,
-    }
-  );
+export function login(data) {
+  return http.request<{ token: string; expired: number }>({
+    url: '/wi-font/web/admin-user/web-login',
+    method: 'POST',
+    data,
+  });
 }
 
 /**

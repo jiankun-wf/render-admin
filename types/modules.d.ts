@@ -24,3 +24,13 @@ declare module 'element-resize-detector' {
 declare module 'uuid' {
   export const v4: () => string;
 }
+
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
+
+declare module '*.webp' {
+  const src: string;
+  export default src;
+}

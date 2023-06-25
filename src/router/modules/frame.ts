@@ -1,7 +1,5 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from '/#/router';
 import { Layout } from '@/router/constant';
-import { LogoIonic } from '@vicons/ionicons5';
-import { renderIcon } from '@/utils/index';
 
 const IFrame = () => import('@/views/iframe/index.vue');
 
@@ -14,7 +12,8 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '内嵌页面',
       sort: 8,
-      icon: renderIcon(LogoIonic),
+      icon: 'LogoIonic',
+      alwaysShow: false,
     },
     children: [
       {

@@ -9,6 +9,7 @@
     :indent="24"
     :expanded-keys="openKeys"
     :value="getSelectedKeys"
+    :render-icon="menuRenderIcon"
     @update:value="clickMenuItem"
     @update:expanded-keys="menuExpanded"
   />
@@ -21,6 +22,7 @@
   import { generatorMenu, generatorMenuMix } from '@/utils';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
+  import { renderIcon } from './icon';
 
   export default defineComponent({
     name: 'ContextMenu',
@@ -87,6 +89,13 @@
           }
         }
       );
+
+      const menuRenderIcon = ({ icon }: { icon?: string }) => {
+        if (!icon) {
+          return null;
+        }
+        return renderIcon(icon);
+      };
 
       // 监听菜单收缩状态
       // watch(
@@ -166,6 +175,7 @@
         getSelectedKeys,
         clickMenuItem,
         menuExpanded,
+        menuRenderIcon,
       };
     },
   });

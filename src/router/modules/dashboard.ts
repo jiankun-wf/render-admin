@@ -1,7 +1,5 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from '/#/router';
 import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
-import { renderIcon } from '@/utils/index';
 
 const routeName = 'dashboard';
 
@@ -11,7 +9,7 @@ const routeName = 'dashboard';
  * @param redirect 重定向地址, 访问这个路由时,自定进行重定向
  * @param meta.disabled 禁用整个菜单
  * @param meta.title 菜单名称
- * @param meta.icon 菜单图标
+ * @param meta.icon vicons 图标
  * @param meta.keepAlive 缓存该路由
  * @param meta.sort 排序越小越排前
  * */
@@ -23,8 +21,8 @@ const routes: Array<RouteRecordRaw> = [
     component: Layout,
     meta: {
       title: 'Dashboard',
-      icon: renderIcon(DashboardOutlined),
-      permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
+      icon: 'DashboardOutlined',
+      // permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
       sort: 0,
     },
     children: [
@@ -33,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
         name: `${routeName}_console`,
         meta: {
           title: '主控台',
-          permissions: ['dashboard_console'],
+          // permissions: ['dashboard_console'],
           affix: true,
         },
         component: () => import('@/views/dashboard/console/console.vue'),
@@ -53,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '工作台',
           keepAlive: true,
-          permissions: ['dashboard_workplace'],
+          // permissions: ['dashboard_workplace'],
         },
         component: () => import('@/views/dashboard/workplace/index'),
       },

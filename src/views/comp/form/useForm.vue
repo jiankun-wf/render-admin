@@ -73,7 +73,7 @@
     {
       field: 'makeDate',
       component: 'Rate',
-      label: '预约时间',
+      label: '星级',
       defaultValue: 4,
       componentProps: {
         type: 'date',
@@ -100,7 +100,7 @@
   const [register, { setLoading: _ }] = useForm({
     gridProps: { cols: 2, xGap: 10 },
     collapsedRows: 3,
-    labelWidth: 'auto',
+    labelWidth: '100px',
     layout: 'horizontal',
     submitButtonText: '提交预约',
     schemas,
