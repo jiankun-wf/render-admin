@@ -1,6 +1,6 @@
-## geetype-admin
+## render-admin
 
-## geetype.cn 后台管理用的  模板
+## 内部 后台管理用的  模板
 
 1. navie-ui 
 2. vite@4
