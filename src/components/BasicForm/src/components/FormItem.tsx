@@ -1,9 +1,12 @@
 import { defineComponent, Fragment } from 'vue';
 import { NFormItem, NTooltip } from 'naive-ui';
 import { ComponentMap } from '../componentMap';
-import { FormSchema, SetFormValue } from '../types';
-import { Component } from '@/router/types';
 import { ExclamationPointer } from './exclamation-pointer';
+import { readonly } from 'vue';
+
+import type { Component } from '@/router/types';
+import type { FormSchema, SetFormValue } from '../types';
+import type { FormActionType } from '../types/formAction';
 
 export const FormItem = defineComponent({
   name: 'NaiveFormItem',
@@ -22,6 +25,10 @@ export const FormItem = defineComponent({
       type: Object as PropType<Recordable>,
       required: true,
     },
+    formActionType: {
+      type: Object as PropType<FormActionType>,
+      required: true,
+    },
   },
   setup(props, { slots: _slots }) {
     const handleUpdateForm = (val: any) => {
@@ -32,12 +39,31 @@ export const FormItem = defineComponent({
       setFormModel(field, val);
     };
 
+    const getComponentProps = () => {
+      const {
+        schema: { componentProps, field },
+        formModel,
+        formActionType,
+      } = props;
+      if (typeof componentProps === 'function') {
+        return componentProps({
+          model: formModel,
+          values: readonly(formModel),
+          field,
+          action: formActionType,
+        });
+      }
+    };
+
     const renderComponent = () => {
       const {
-        schema: { component, componentProps, field },
+        schema: { component, field },
         formModel,
       } = props;
       const Component = ComponentMap.get(component) as Component;
+
+      const componentProps = getComponentProps();
+
       return (
         <Component {...componentProps} value={formModel[field]} onUpdate:value={handleUpdateForm} />
       );
@@ -72,7 +98,7 @@ export const FormItem = defineComponent({
             {labelBuild()}
             <NTooltip {...helpMessageToolTipProps}>
               {{
-                trigger: () =>  <ExclamationPointer />,
+                trigger: () => <ExclamationPointer />,
                 default: () => helpMessage,
               }}
             </NTooltip>

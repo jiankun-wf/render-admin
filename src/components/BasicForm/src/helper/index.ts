@@ -1,8 +1,5 @@
 import { unref } from 'vue';
-
-export const isObject = (value: unknown): value is Object => {
-  return Object.prototype.toString.call(value) === `[object Object]`;
-};
+import { isObject } from './is';
 
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
   let key: string;

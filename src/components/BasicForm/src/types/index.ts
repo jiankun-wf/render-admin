@@ -94,7 +94,7 @@ export interface FormSchema<DefaultValue = unknown, ComponentProps = Record<stri
 export type SchemaCallParams = {
   model: Readonly<Record<string, any>>;
   readonly field: string;
-  readonly values: Record<string, any>;
+  readonly values: Readonly<Record<string, any>>;
   readonly action?: FormActionType;
   readonly schema?: FormSchema;
 };

@@ -26,7 +26,7 @@ export interface UserInfo {
  */
 export function getUserInfo() {
   return http.request<UserInfo>({
-    url: '/wi-font/web/admin-user/user-info',
+    url: '/api/admin_info',
     method: 'GET',
   });
 }
@@ -36,7 +36,7 @@ export function getUserInfo() {
  */
 export function login(data) {
   return http.request<{ token: string; expired: number }>({
-    url: '/wi-font/web/admin-user/web-login',
+    url: '/api/login',
     method: 'POST',
     data,
   });

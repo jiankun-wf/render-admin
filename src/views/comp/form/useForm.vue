@@ -5,11 +5,7 @@
     </div>
     <n-card :bordered="false" class="mt-4 proCard">
       <div class="BasicForm">
-        <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-          <template #header>
-            <div class="mb-3 text-xl text-center">我是头部呀</div>
-          </template>
-        </BasicForm>
+        <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset" />
       </div>
     </n-card>
   </div>
@@ -29,9 +25,6 @@
       colProps: { span: 1 },
       componentProps: {
         placeholder: '请输入姓名',
-        onInput: (e: any) => {
-          console.log(e);
-        },
       },
       rule: [{ required: true, message: '请输入姓名', trigger: ['blur'] }],
     },
