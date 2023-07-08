@@ -83,7 +83,7 @@ export interface FormSchema<DefaultValue = unknown, ComponentProps = Record<stri
   // 是否展示（v-show） naive-ui Grid 封装问题 暂时先不加入 等完成再研究
   // show?: boolean | SchemaFunctionalProp<boolean>;
   // 是否渲染（v-if）此处采用的是naive-ui-grid 的span为0 默认隐藏特性，没有使用v-if 有问题咱再改；
-  ifShow?: boolean | SchemaFunctionalCall<SchemaCallParams, boolean>;
+  ifShow?: boolean | SchemaFunctionalCall<Pick<SchemaCallParams, 'values' | 'field'>, boolean>;
   // 自定义content渲染。需要自己包含FormItem标签；渲染优先级：刘备（大哥）
   contentRender?: SchemaFunctionalCall<SchemaCallParams, VNode | string>;
   // slot名字； 渲染优先级：关羽（二弟）
@@ -95,17 +95,16 @@ export type SchemaCallParams = {
   model: Readonly<Record<string, any>>;
   readonly field: string;
   readonly values: Readonly<Record<string, any>>;
-  readonly action?: FormActionType;
-  readonly schema?: FormSchema;
+  readonly action: FormActionType;
+  readonly schema: FormSchema;
 };
 
-export type SchemaFunctionalCall<
-  Params extends SchemaCallParams,
-  Render = VNode,
-  ExtraArg = any
-> = (params: Params, ...args: ExtraArg[]) => Render;
+export type SchemaFunctionalCall<Params = SchemaCallParams, Render = VNode, ExtraArg = any> = (
+  params: Params,
+  ...args: ExtraArg[]
+) => Render;
 
 export type SetFormValue = <T = any>(
   key: string,
-  val: T
-) => { key: string; val: T; values: Record<string, any> };
+  value: T
+) => { key: string; value: T; values: Record<string, any> };

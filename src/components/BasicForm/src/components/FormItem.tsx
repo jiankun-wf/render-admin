@@ -1,8 +1,7 @@
-import { defineComponent, Fragment } from 'vue';
+import { defineComponent, Fragment, readonly, renderSlot } from 'vue';
 import { NFormItem, NTooltip } from 'naive-ui';
 import { ComponentMap } from '../componentMap';
 import { ExclamationPointer } from './exclamation-pointer';
-import { readonly } from 'vue';
 
 import type { Component } from '@/router/types';
 import type { FormSchema, SetFormValue } from '../types';
@@ -30,7 +29,7 @@ export const FormItem = defineComponent({
       required: true,
     },
   },
-  setup(props, { slots: _slots }) {
+  setup(props, { slots }) {
     const handleUpdateForm = (val: any) => {
       const {
         setFormModel,
@@ -51,18 +50,31 @@ export const FormItem = defineComponent({
           values: readonly(formModel),
           field,
           action: formActionType,
+          schema: props.schema,
         });
       }
+      return componentProps;
     };
 
     const renderComponent = () => {
       const {
-        schema: { component, field },
+        schema: { component, field, slot },
         formModel,
+        formActionType,
       } = props;
       const Component = ComponentMap.get(component) as Component;
 
       const componentProps = getComponentProps();
+
+      if (slot && slots[slot]) {
+        return renderSlot(slots, slot, {
+          model: formModel,
+          values: readonly(formModel),
+          field,
+          action: formActionType,
+          schema: props.schema,
+        });
+      }
 
       return (
         <Component {...componentProps} value={formModel[field]} onUpdate:value={handleUpdateForm} />
@@ -91,11 +103,11 @@ export const FormItem = defineComponent({
 
         if (!label) return undefined;
         if (!helpMessage) {
-          return labelBuild();
+          return label;
         }
         return (
           <>
-            {labelBuild()}
+            {label}
             <NTooltip {...helpMessageToolTipProps}>
               {{
                 trigger: () => <ExclamationPointer />,
@@ -113,7 +125,7 @@ export const FormItem = defineComponent({
       const { field } = props.schema;
 
       return (
-        <NFormItem {...props.schema} label={''} path={field}>
+        <NFormItem {...props.schema} label="" path={field}>
           {{
             label: () => renderLabel(),
             default: () => renderComponent(),

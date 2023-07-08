@@ -5,7 +5,11 @@
     </div>
     <n-card :bordered="false" class="mt-4 proCard">
       <div class="BasicForm">
-        <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset" />
+        <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
+          <template #name="{ model, field }">
+            {{ model[field] ?? '-' }}
+          </template>
+        </BasicForm>
       </div>
     </n-card>
   </div>
@@ -26,7 +30,8 @@
       componentProps: {
         placeholder: '请输入姓名',
       },
-      rule: [{ required: true, message: '请输入姓名', trigger: ['blur'] }],
+      rule: [{ required: false, message: '请输入姓名', trigger: ['blur'] }],
+      slot: 'name',
     },
     {
       field: 'mobile',
@@ -36,9 +41,6 @@
         placeholder: '请输入手机号码',
         showButton: false,
         style: { width: '100%' },
-        onInput: (e: any) => {
-          console.log(e);
-        },
       },
     },
     {
@@ -46,7 +48,7 @@
       component: 'Select',
       label: '类型',
       colProps: { span: 1 },
-      componentProps: {
+      componentProps: ({ action }) => ({
         placeholder: '请选择类型',
         options: [
           {
@@ -58,10 +60,11 @@
             value: 2,
           },
         ],
-        onUpdateValue: (e: any) => {
-          console.log(e);
+        onUpdateValue: (_, item) => {
+          const { setFieldsValue } = action;
+          setFieldsValue({ name: item.label });
         },
-      },
+      }),
     },
     {
       field: 'makeDate',
@@ -77,6 +80,14 @@
       },
       ifShow: ({ values }) => {
         return values.type === 1;
+      },
+    },
+    {
+      field: 'split',
+      component: 'Divider',
+      componentProps: {
+        dashed: true,
+        titlePlacement: 'center',
       },
     },
     {

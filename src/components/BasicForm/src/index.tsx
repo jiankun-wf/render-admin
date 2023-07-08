@@ -1,24 +1,36 @@
-import { computed, defineComponent, ref } from 'vue';
-import { NForm as Form, NGrid as Grid, NGridItem, NSpin } from 'naive-ui';
-import { unref } from 'vue';
-import { renderSlot } from 'vue';
+import {
+  computed,
+  defineComponent,
+  readonly,
+  ref,
+  watch,
+  unref,
+  renderSlot,
+  onMounted,
+  reactive,
+} from 'vue';
+// props;
 import { BasicFormPorps } from './props/form';
-import { reactive } from 'vue';
-import { FormProps, FormSchema, SetFormValue } from './types';
-import { onMounted } from 'vue';
-import { deepMerge } from '@/utils';
+// utils;
+import { deepMerge } from './helper/index';
+import { getColProps, getShow } from './helper/render';
+import { isFunction } from './helper/is';
+// components
 import { FormItem } from './components/FormItem';
-import { watch } from 'vue';
+import { NForm as Form, NGrid as Grid, NGridItem, NSpin } from 'naive-ui';
+// hooks
 import { useFormLoading } from './hooks/useFormLoading';
-import { getShow } from './helper/render';
-import { FormActionType } from './types/formAction';
-import { useFormSchema } from './hooks/useFormSchema';
 import { useFormDefaultValue } from './hooks/useFormDefaultValue';
+import { useFormSchema } from './hooks/useFormSchema';
+import { useFormValues } from './hooks/useFormValues';
+// types
+import type { FormActionType } from './types/formAction';
+import type { FormProps, FormSchema } from './types';
 
 const BasicForm = defineComponent({
   name: 'NaiveBasicForm',
   props: BasicFormPorps,
-  emits: ['register', 'schema-change'],
+  emits: ['register', 'schema-change', 'validate-error', 'submit', 'collapse-change'],
   setup(props, { attrs, emit, slots }) {
     // formModel
     const formRef = ref();
@@ -26,9 +38,6 @@ const BasicForm = defineComponent({
     const formPropsRef = ref<Partial<FormProps>>({});
     const schemaRef = ref<null | FormSchema[]>(null);
     const defaultValueRef = ref<Record<string, any>>({});
-
-    // loading
-    const { formLoading, setLoading } = useFormLoading(props);
 
     // 是否为展开
     const gridCollapsed = ref(false);
@@ -52,23 +61,15 @@ const BasicForm = defineComponent({
       return unref(schemaRef) ?? (unref(getFormProps).schemas as FormSchema[]);
     });
 
-    const renderFormItemContent = (schema: FormSchema) => {
-      const { getIfShow } = getShow(schema, formModel);
+    const { setFieldsValue, setFieldValue, getFieldsValue } = useFormValues({
+      formModel,
+      getFormSchema,
+      props,
+    });
 
-      const span = getIfShow ? undefined : { span: 0 };
-
-      return (
-        <NGridItem {...schema.colProps} {...span} key={schema.field}>
-          <FormItem
-            schema={schema}
-            setFormModel={setFormValue}
-            formModel={formModel}
-            formActionType={formActionType}
-          />
-        </NGridItem>
-      );
-    };
-
+    // loading
+    const { formLoading, setLoading } = useFormLoading(props);
+    // defaultValue
     const [initDefault, isInitDefaultValue] = useFormDefaultValue({
       getSchema: getFormSchema,
       formModel,
@@ -95,27 +96,49 @@ const BasicForm = defineComponent({
       formPropsRef.value = deepMerge(unref(formPropsRef) || {}, formProps);
     };
 
-    const setFormValue: SetFormValue = (key: string, val: any) => {
-      formModel[key] = val;
-      return { key, val, values: formModel };
-    };
-
-    const setFieldsValue = (values: Record<string, any>) => {
-      for (const key in values) {
-        if (Reflect.has(values, key)) {
-          setFormValue(key, values[key]);
-        }
-      }
-    };
-
     const formActionType: Readonly<FormActionType> = {
       setProps: setProps.bind(null),
       setLoading: setLoading.bind(null),
       setFieldsValue: setFieldsValue.bind(null),
-      addFormSchema,
-      updateFormSchema,
-      removeFormSchema,
-      getFormSchemas,
+      addFormSchema: addFormSchema.bind(null),
+      updateFormSchema: updateFormSchema.bind(null),
+      removeFormSchema: removeFormSchema.bind(null),
+      getFormSchemas: getFormSchemas.bind(null),
+      getFieldsValue: getFieldsValue.bind(null),
+    };
+
+    //  内容渲染
+    const renderFormItemContent = (schema: FormSchema) => {
+      const { contentRender, field, colProps, component } = schema;
+
+      const { getIfShow } = getShow(schema, readonly(formModel));
+      //  contentRender 为优先级最高的自定义渲染
+      if (contentRender && isFunction(contentRender) && getIfShow) {
+        return contentRender({
+          model: formModel,
+          values: readonly(formModel),
+          field,
+          action: formActionType,
+          schema,
+        });
+      }
+
+      const itemColProps = getColProps({ colProps, getIfShow, component });
+
+      return (
+        <NGridItem {...itemColProps} key={schema.field}>
+          <FormItem
+            schema={schema}
+            setFormModel={setFieldValue}
+            formModel={formModel}
+            formActionType={formActionType}
+          >
+            {{
+              ...slots,
+            }}
+          </FormItem>
+        </NGridItem>
+      );
     };
 
     watch(formPropsRef, () => {

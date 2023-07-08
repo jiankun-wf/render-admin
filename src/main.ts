@@ -1,5 +1,7 @@
-import './styles/tailwind.css';
 import 'katex/dist/katex.css';
+import './styles/index.less';
+import 'virtual:uno.css';
+import 'uno.css';
 
 import { createApp } from 'vue';
 import { setupNaiveDiscreteApi, setupNaive, setupDirectives } from '@/plugins';

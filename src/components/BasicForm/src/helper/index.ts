@@ -1,5 +1,6 @@
 import { unref } from 'vue';
 import { isObject } from './is';
+import { ComponentType } from '../types/componentType';
 
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
   let key: string;
@@ -18,3 +19,5 @@ export function gerRawProps(props: Record<string, any>) {
 
   return raw;
 }
+
+export const filterValueComponents: ComponentType[] = ['Divider'];

@@ -76,7 +76,7 @@ export const useFormSchema = ({
     if (!field) return;
     const schemas = unref(schemaRef) ?? (unref(formProps).schemas as FormSchema[]);
 
-    if (Array.isArray(field)) {
+    if (isArray(field)) {
       schemaRef.value = schemas.filter((v) => {
         const isYou = field.findIndex((s) => s === v.field) > -1;
         if (isYou) {

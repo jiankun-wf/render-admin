@@ -4,6 +4,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
+import UnoCss from 'unocss/vite';
 
 import { configHtmlPlugin } from './html';
 import { configMockPlugin } from './mock';
@@ -24,6 +25,8 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean, prodMock) 
       dts: true,
       resolvers: [NaiveUiResolver()],
     }),
+    // unocss plugin
+    UnoCss(),
   ];
 
   // vite-plugin-html
