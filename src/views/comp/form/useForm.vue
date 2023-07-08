@@ -60,9 +60,10 @@
             value: 2,
           },
         ],
-        onUpdateValue: (_, item) => {
-          const { setFieldsValue } = action;
+        'onUpdate:value': (_, item) => {
+          const { setFieldsValue, getFieldsValue } = action;
           setFieldsValue({ name: item.label });
+          console.log(getFieldsValue());
         },
       }),
     },
@@ -83,14 +84,6 @@
       },
     },
     {
-      field: 'split',
-      component: 'Divider',
-      componentProps: {
-        dashed: true,
-        titlePlacement: 'center',
-      },
-    },
-    {
       field: 'test',
       component: 'ColorPicker',
       label: '颜色测试',
@@ -102,7 +95,7 @@
   const message = useMessage();
 
   const [register, { setLoading: _ }] = useForm({
-    gridProps: { cols: 2, xGap: 10 },
+    gridProps: { cols: 2, xGap: 10, collapsedRows: 1 },
     collapsedRows: 3,
     labelWidth: '100px',
     layout: 'horizontal',

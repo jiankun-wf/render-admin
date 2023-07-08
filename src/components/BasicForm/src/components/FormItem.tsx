@@ -77,7 +77,7 @@ export const FormItem = defineComponent({
       }
 
       return (
-        <Component {...componentProps} value={formModel[field]} onUpdate:value={handleUpdateForm} />
+        <Component value={formModel[field]} onUpdate:value={handleUpdateForm} {...componentProps} />
       );
     };
 
