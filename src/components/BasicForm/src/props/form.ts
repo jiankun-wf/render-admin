@@ -1,7 +1,7 @@
-import { ButtonProps, GridItemProps, GridProps } from 'naive-ui';
-import { FormSchema } from '../types';
-import { PropType, CSSProperties } from 'vue';
-import { FormSize, LabelPlacement, RequiredMarkPlacement } from '../types/Rule';
+import type { ButtonProps, GridItemProps, GridProps } from 'naive-ui';
+import type { FormSchema } from '../types';
+import type { PropType, CSSProperties } from 'vue';
+import type { FormSize, LabelPlacement, RequiredMarkPlacement } from '../types/Rule';
 
 export const BasicFormPorps = {
   // 标签宽度  固定宽度
@@ -55,7 +55,7 @@ export const BasicFormPorps = {
     default: true,
   },
   // 确认按钮配置
-  submitButtonOptions: {
+  submitButtonProps: {
     type: Object as PropType<Partial<ButtonProps>>,
     default: { type: 'primary' },
   },

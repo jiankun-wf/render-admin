@@ -1,34 +1,52 @@
-import { computed, defineComponent, ref } from 'vue';
-import { NForm as Form, NGrid as Grid, NGridItem, NSpin } from 'naive-ui';
-import { unref } from 'vue';
-import { renderSlot } from 'vue';
+import {
+  computed,
+  defineComponent,
+  readonly,
+  ref,
+  unref,
+  renderSlot,
+  onMounted,
+  reactive,
+} from 'vue';
+// props;
 import { BasicFormPorps } from './props/form';
-import { reactive } from 'vue';
-import { FormProps, FormSchema, SetFormValue } from './types';
-import { onMounted } from 'vue';
-import { deepMerge } from '@/utils';
+// utils;
+import { deepMerge } from './helper/index';
+import { getColProps, getShow } from './helper/render';
+import { isFunction } from './helper/is';
+// components
 import { FormItem } from './components/FormItem';
-import { watch } from 'vue';
+import { NForm as Form, NGrid as Grid, NDivider, NGridItem, NSpin } from 'naive-ui';
+// hooks
+import { useFormRef } from './hooks/useFormRef';
 import { useFormLoading } from './hooks/useFormLoading';
-import { getShow } from './helper/render';
-import { FormActionType } from './types/formAction';
-import { useFormSchema } from './hooks/useFormSchema';
 import { useFormDefaultValue } from './hooks/useFormDefaultValue';
+import { useFormSchema } from './hooks/useFormSchema';
+import { useFormValues } from './hooks/useFormValues';
+import { useFormEvent } from './hooks/useFormEvent';
+// types
+import type { FormActionType } from './types/formAction';
+import type { FormProps, FormSchema } from './types';
 
 const BasicForm = defineComponent({
   name: 'NaiveBasicForm',
   props: BasicFormPorps,
-  emits: ['register', 'schema-change'],
+  emits: [
+    'register',
+    'schema-change',
+    'validate-error',
+    'submit',
+    'collapse-change',
+    'reset',
+    'clear-validate',
+  ],
   setup(props, { attrs, emit, slots }) {
     // formModel
-    const formRef = ref();
     const formModel = reactive<Record<string, any>>({});
+    const formValues = readonly(formModel);
     const formPropsRef = ref<Partial<FormProps>>({});
     const schemaRef = ref<null | FormSchema[]>(null);
     const defaultValueRef = ref<Record<string, any>>({});
-
-    // loading
-    const { formLoading, setLoading } = useFormLoading(props);
 
     // 是否为展开
     const gridCollapsed = ref(false);
@@ -52,82 +70,131 @@ const BasicForm = defineComponent({
       return unref(schemaRef) ?? (unref(getFormProps).schemas as FormSchema[]);
     });
 
-    const renderFormItemContent = (schema: FormSchema) => {
-      const { getIfShow } = getShow(schema, formModel);
+    const [formRef, createFormRef] = useFormRef();
 
-      const span = getIfShow ? undefined : { span: 0 };
+    const { setFieldsValue, setFieldValue, getFieldsValue } = useFormValues({
+      formModel,
+      formValues,
+      getFormSchema,
+      props,
+    });
 
-      return (
-        <NGridItem {...schema.colProps} {...span} key={schema.field}>
-          <FormItem
-            schema={schema}
-            setFormModel={setFormValue}
-            formModel={formModel}
-            formActionType={formActionType}
-          />
-        </NGridItem>
-      );
-    };
-
+    // loading
+    const { formLoading, setLoading } = useFormLoading(props);
+    // defaultValue
     const [initDefault, isInitDefaultValue] = useFormDefaultValue({
       getSchema: getFormSchema,
       formModel,
       defaultValueRef,
     });
 
-    const { addFormSchema, updateFormSchema, removeFormSchema, getFormSchemas } = useFormSchema({
-      schemaRef,
-      formProps: getFormProps,
+    const { addFormSchema, updateFormSchema, removeFormSchema, getFormSchemas, resetFormSchema } =
+      useFormSchema({
+        schemaRef,
+        formProps: getFormProps,
+        emit,
+        defaultValue: defaultValueRef,
+        initDefault,
+        formModel,
+        getSchema: getFormSchema,
+        isInitDefaultValue,
+      });
+
+    const { validate, clearValidate, resetFields, validateFields } = useFormEvent({
       emit,
-      defaultValue: defaultValueRef,
-      initDefault,
+      formRef,
       formModel,
-      getSchema: getFormSchema,
-      isInitDefaultValue,
+      formValues,
+      defaultValueRef,
+      getFieldsValue,
     });
 
-    // 生成ref
-    const createFormRef = (_ref) => {
-      formRef.value = _ref;
-    };
-
-    const setProps = (formProps: Partial<FormProps>) => {
+    const setProps = async (formProps: Partial<FormProps>) => {
       formPropsRef.value = deepMerge(unref(formPropsRef) || {}, formProps);
-    };
-
-    const setFormValue: SetFormValue = (key: string, val: any) => {
-      formModel[key] = val;
-      return { key, val, values: formModel };
-    };
-
-    const setFieldsValue = (values: Record<string, any>) => {
-      for (const key in values) {
-        if (Reflect.has(values, key)) {
-          setFormValue(key, values[key]);
-        }
-      }
     };
 
     const formActionType: Readonly<FormActionType> = {
       setProps: setProps.bind(null),
       setLoading: setLoading.bind(null),
       setFieldsValue: setFieldsValue.bind(null),
-      addFormSchema,
-      updateFormSchema,
-      removeFormSchema,
-      getFormSchemas,
+      addFormSchema: addFormSchema.bind(null),
+      updateFormSchema: updateFormSchema.bind(null),
+      removeFormSchema: removeFormSchema.bind(null),
+      getFormSchemas: getFormSchemas.bind(null),
+      resetFormSchema: resetFormSchema.bind(null),
+      getFieldsValue: getFieldsValue.bind(null),
+      validate: validate.bind(null),
+      clearValidate: clearValidate.bind(null),
+      resetFields: resetFields.bind(null),
+      validateFields: validateFields.bind(null),
     };
 
-    watch(formPropsRef, () => {
-      schemaRef.value = unref(formPropsRef).schemas ?? [];
-    });
+    const renderDivider = (schema: FormSchema) => {
+      const { colProps, component, label, componentProps = {} } = schema;
+
+      const { getIfShow, getIsShow } = getShow(schema, formValues);
+      const itemColProps = getColProps({ colProps, component, getIfShow });
+
+      const title = isFunction(label) ? label() : label;
+
+      return (
+        <NGridItem
+          {...itemColProps}
+          key={schema.field}
+          style={{ display: getIsShow ? undefined : 'none' }}
+        >
+          <NDivider {...componentProps}>{title}</NDivider>
+        </NGridItem>
+      );
+    };
+
+    //  内容渲染
+    const renderFormItemContent = (schema: FormSchema) => {
+      const { contentRender, field, colProps, component, slot } = schema;
+      if (component === 'Divider') {
+        return renderDivider(schema);
+      }
+
+      const { getIfShow, getIsShow } = getShow(schema, readonly(formModel));
+      //  contentRender 为优先级最高的自定义渲染
+      if (contentRender && isFunction(contentRender) && getIfShow) {
+        return contentRender({
+          model: formModel,
+          values: formValues,
+          field,
+          action: formActionType,
+          schema,
+        });
+      }
+
+      const itemColProps = getColProps({ colProps, getIfShow, component });
+      const itemSlots = slot && slots[slot] ? { [field]: slots[slot] } : {};
+
+      return (
+        <NGridItem
+          {...itemColProps}
+          key={schema.field}
+          style={{ display: getIsShow ? undefined : 'none' }}
+        >
+          <FormItem
+            schema={schema}
+            setFormModel={setFieldValue}
+            formModel={formModel}
+            formValues={formValues}
+            formActionType={formActionType}
+          >
+            {itemSlots}
+          </FormItem>
+        </NGridItem>
+      );
+    };
 
     onMounted(() => {
       emit('register', formActionType);
     });
 
     return () => (
-      <Form {...unref(getFormProps)} ref={createFormRef} model={formModel}>
+      <Form {...unref(getFormProps)} ref={createFormRef as any} model={formModel}>
         <NSpin show={unref(formLoading)}>
           {/* 表单头部插槽 */}
           {slots.header && <div class="form-header">{renderSlot(slots, 'header')}</div>}
@@ -135,6 +202,8 @@ const BasicForm = defineComponent({
           <Grid {...unref(getGridProps)}>
             {unref(getFormSchema).map((schema) => renderFormItemContent(schema))}
           </Grid>
+          {/* TODO 提交、重置、展开收缩 */}
+          {/* .... */}
         </NSpin>
       </Form>
     );
