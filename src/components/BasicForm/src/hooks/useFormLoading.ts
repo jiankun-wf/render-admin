@@ -12,7 +12,7 @@ export const useFormLoading = (formProps: FormProps) => {
     }
   );
 
-  const setLoading = (flag: boolean) => {
+  const setLoading = async (flag: boolean) => {
     loading.value = flag;
   };
 

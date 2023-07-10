@@ -1,4 +1,4 @@
-import { defineComponent, Fragment, readonly, renderSlot } from 'vue';
+import { defineComponent, Fragment, renderSlot } from 'vue';
 import { NFormItem, NTooltip } from 'naive-ui';
 import { ComponentMap } from '../componentMap';
 import { ExclamationPointer } from './exclamation-pointer';
@@ -24,6 +24,10 @@ export const FormItem = defineComponent({
       type: Object as PropType<Recordable>,
       required: true,
     },
+    formValues: {
+      type: Object as PropType<Recordable>,
+      required: true,
+    },
     formActionType: {
       type: Object as PropType<FormActionType>,
       required: true,
@@ -38,16 +42,17 @@ export const FormItem = defineComponent({
       setFormModel(field, val);
     };
 
-    const getComponentProps = () => {
+    const getComponentProps = (): Record<string, any> | undefined => {
       const {
         schema: { componentProps, field },
         formModel,
         formActionType,
+        formValues,
       } = props;
       if (typeof componentProps === 'function') {
         return componentProps({
           model: formModel,
-          values: readonly(formModel),
+          values: formValues,
           field,
           action: formActionType,
           schema: props.schema,
@@ -58,18 +63,23 @@ export const FormItem = defineComponent({
 
     const renderComponent = () => {
       const {
-        schema: { component, field, slot },
+        schema: { component, field },
         formModel,
         formActionType,
+        formValues,
       } = props;
       const Component = ComponentMap.get(component) as Component;
 
       const componentProps = getComponentProps();
 
-      if (slot && slots[slot]) {
-        return renderSlot(slots, slot, {
+      // [field]: slot && slots[slot]
+      // 外层 强制将 自定义slot的名字转为slots 有如下优点
+      // 1. 不需将slots整个传入，节省性能
+      // 2. slot为string | undefined 但是field为必传，不需额外判断
+      if (slots[field]) {
+        return renderSlot(slots, field, {
           model: formModel,
-          values: readonly(formModel),
+          values: formValues,
           field,
           action: formActionType,
           schema: props.schema,
@@ -77,7 +87,11 @@ export const FormItem = defineComponent({
       }
 
       return (
-        <Component value={formModel[field]} onUpdate:value={handleUpdateForm} {...componentProps} />
+        <Component
+          value={formValues[field]}
+          onUpdate:value={handleUpdateForm}
+          {...componentProps}
+        />
       );
     };
 

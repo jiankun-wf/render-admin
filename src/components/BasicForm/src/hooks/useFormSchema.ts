@@ -25,7 +25,7 @@ export const useFormSchema = ({
   isInitDefaultValue: Ref<boolean>;
 }) => {
   // 追加formschema
-  const addFormSchema = (schema: FormSchema | FormSchema[]) => {
+  const addFormSchema = async (schema: FormSchema | FormSchema[]) => {
     const schemas = unref(schemaRef) ?? (unref(formProps).schemas as FormSchema[]);
     const defaultValueN: Record<string, any> = {};
     if (isArray(schema)) {
@@ -43,7 +43,7 @@ export const useFormSchema = ({
     emit('schema-change');
   };
   //   更新某个或者某些formshcema
-  const updateFormSchema = (schema: FormSchema | FormSchema[]) => {
+  const updateFormSchema = async (schema: FormSchema | FormSchema[]) => {
     let updateData: Partial<FormSchema>[] = [];
     if (isObject(schema)) {
       updateData.push(schema as FormSchema);
@@ -67,12 +67,12 @@ export const useFormSchema = ({
     emit('schema-change');
   };
   //   重置formschema
-  const resetFormSchema = (schemas: FormSchema[]) => {
+  const resetFormSchema = async (schemas: FormSchema[]) => {
     schemaRef.value = schemas;
     initDefault();
   };
   //   移除指定formschema
-  const removeFormSchema = (field: string | string[]) => {
+  const removeFormSchema = async (field: string | string[]) => {
     if (!field) return;
     const schemas = unref(schemaRef) ?? (unref(formProps).schemas as FormSchema[]);
 
@@ -93,7 +93,7 @@ export const useFormSchema = ({
     emit('schema-change');
   };
   // 获取shcemas
-  const getFormSchemas = (field?: string | string[]) => {
+  const getFormSchemas = async (field?: string | string[]) => {
     const schemas = unref(schemaRef) ?? (unref(formProps).schemas as FormSchema[]);
     if (!field) return schemas;
     if (isString(field)) {

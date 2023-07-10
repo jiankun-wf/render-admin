@@ -4,7 +4,7 @@ import type { ComponentType } from '../types/componentType';
 
 export const getShow = (schema: FormSchema, values: Recordable) => {
   // const { ifShow, show } = schema;
-  const { ifShow } = schema;
+  const { ifShow, show } = schema;
 
   const GetIfShow = () => {
     if (typeof ifShow === 'boolean') {
@@ -14,16 +14,16 @@ export const getShow = (schema: FormSchema, values: Recordable) => {
     } else return true;
   };
 
-  // const GetIsShow = () => {
-  //   if (typeof show === 'boolean') {
-  //     return show;
-  //   } else if (typeof show === 'function') {
-  //     return show({ model: values, field: schema.field, values: values });
-  //   } else return true;
-  // };
+  const GetIsShow = () => {
+    if (typeof show === 'boolean') {
+      return show;
+    } else if (typeof show === 'function') {
+      return show({ field: schema.field, values: values });
+    } else return true;
+  };
 
-  return { getIfShow: GetIfShow() };
-  // return { getIfShow: GetIfShow(), getIsShow: GetIsShow() };
+  // return { getIfShow: GetIfShow() };
+  return { getIfShow: GetIfShow(), getIsShow: GetIsShow() };
 };
 
 export const getColProps = ({
@@ -38,7 +38,7 @@ export const getColProps = ({
   if (!getIfShow) return { span: 0 };
 
   if (component === 'Divider') {
-    return { span: 24, offset: 0 };
+    return colProps ?? { span: 24, offset: 0 };
   }
 
   return colProps;

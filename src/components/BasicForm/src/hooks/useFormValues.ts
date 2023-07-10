@@ -1,5 +1,4 @@
 import { ComputedRef } from 'vue';
-import { readonly } from 'vue';
 import { FormProps, FormSchema } from '../types';
 import { unref } from 'vue';
 import { getShow } from '../helper/render';
@@ -8,19 +7,21 @@ import { watch } from 'vue';
 
 export const useFormValues = ({
   formModel,
+  formValues,
   getFormSchema: getSchema,
   props,
 }: {
   formModel: Record<string, any>;
+  formValues: Record<string, any>;
   getFormSchema: ComputedRef<FormSchema[]>;
   props: FormProps;
 }) => {
   const setFieldValue = (key: string, value: any) => {
     formModel[key] = value;
-    return { key, value, values: readonly(formModel) };
+    return { key, value, values: formValues };
   };
 
-  const setFieldsValue = (values: Record<string, any>) => {
+  const setFieldsValue = async (values: Record<string, any>) => {
     for (const key in values) {
       if (Reflect.has(values, key)) {
         setFieldValue(key, values[key]);
@@ -28,7 +29,7 @@ export const useFormValues = ({
     }
   };
 
-  const resetFiledsValue = (values: Record<string, any>) => {
+  const resetFiledsValue = async (values: Record<string, any>) => {
     for (const key in formModel) {
       Reflect.has(formModel, key) && Reflect.deleteProperty(formModel, key);
     }

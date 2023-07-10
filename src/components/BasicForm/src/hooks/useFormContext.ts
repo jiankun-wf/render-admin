@@ -1,11 +1,12 @@
 import { provide, inject } from 'vue';
+import type { FormContext } from '../types';
 
 const key = Symbol('formContext');
 
-export function createFormContext(instance) {
-  provide(key, instance);
+export function createFormContext(formContext: FormContext) {
+  provide(key, formContext);
 }
 
 export function useFormContext() {
-  return inject(key);
+  return inject<FormContext>(key);
 }

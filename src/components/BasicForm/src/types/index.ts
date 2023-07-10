@@ -2,7 +2,7 @@ import type { FormItemRule, GridItemProps, ButtonProps, GridProps, TooltipProps 
 import type { ComponentType } from './componentType';
 import type { CSSProperties, VNode } from 'vue';
 import type { FormActionType } from './formAction';
-import { VNodeChild } from 'vue';
+import type { VNodeChild } from 'vue';
 
 export interface FormProps {
   // 表单收集
@@ -84,6 +84,7 @@ export interface FormSchema<DefaultValue = unknown, ComponentProps = Record<stri
   // show?: boolean | SchemaFunctionalProp<boolean>;
   // 是否渲染（v-if）此处采用的是naive-ui-grid 的span为0 默认隐藏特性，没有使用v-if 有问题咱再改；
   ifShow?: boolean | SchemaFunctionalCall<Pick<SchemaCallParams, 'values' | 'field'>, boolean>;
+  show?: boolean | SchemaFunctionalCall<Pick<SchemaCallParams, 'values' | 'field'>, boolean>;
   // 自定义content渲染。需要自己包含FormItem标签；渲染优先级：刘备（大哥）
   contentRender?: SchemaFunctionalCall<SchemaCallParams, VNode | string>;
   // slot名字； 渲染优先级：关羽（二弟）
@@ -108,3 +109,10 @@ export type SetFormValue = <T = any>(
   key: string,
   value: T
 ) => { key: string; value: T; values: Record<string, any> };
+
+export type FormContext = {
+  formModel: Record<string, any>;
+  values: Readonly<Record<string, any>>; // 此为实时追踪的formModel表单值，不可被修改。
+  schemas: FormSchema[];
+  action: FormActionType;
+};

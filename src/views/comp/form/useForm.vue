@@ -7,7 +7,7 @@
       <div class="BasicForm">
         <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
           <template #name="{ model, field }">
-            {{ model[field] ?? '-' }}
+            <NInput v-model:value="model[field]" />
           </template>
         </BasicForm>
       </div>
@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/BasicForm/index';
-  import { useMessage } from 'naive-ui';
+  import { useMessage, NInput } from 'naive-ui';
   // import { onMounted } from 'vue';
 
   const schemas: FormSchema[] = [
@@ -25,12 +25,14 @@
       field: 'name',
       component: 'Input',
       label: '姓名',
+      defaultValue: 'PC',
       helpMessage: '这是一个提示',
       colProps: { span: 1 },
       componentProps: {
         placeholder: '请输入姓名',
       },
-      rule: [{ required: false, message: '请输入姓名', trigger: ['blur'] }],
+      show: false,
+      rule: [{ required: true, message: '请输入姓名', key: 'name-required' }],
       slot: 'name',
     },
     {
@@ -42,6 +44,12 @@
         showButton: false,
         style: { width: '100%' },
       },
+    },
+    {
+      field: 'split-line',
+      label: '测试分割线',
+      component: 'Divider',
+      // colProps: { span: 1 },
     },
     {
       field: 'type',
@@ -60,10 +68,12 @@
             value: 2,
           },
         ],
-        'onUpdate:value': (_, item) => {
-          const { setFieldsValue, getFieldsValue } = action;
+        'onUpdate:value': (val, item) => {
+          const { setFieldsValue, removeFormSchema } = action;
           setFieldsValue({ name: item.label });
-          console.log(getFieldsValue());
+          if (val === 2) {
+            removeFormSchema('name2');
+          }
         },
       }),
     },
@@ -94,9 +104,8 @@
 
   const message = useMessage();
 
-  const [register, { setLoading: _ }] = useForm({
-    gridProps: { cols: 2, xGap: 10, collapsedRows: 1 },
-    collapsedRows: 3,
+  const [register, {}] = useForm({
+    gridProps: { cols: 2, xGap: 10 },
     labelWidth: '100px',
     layout: 'horizontal',
     submitButtonText: '提交预约',
@@ -115,6 +124,14 @@
   function handleReset(values: Recordable) {
     console.log(values);
   }
+
+  // onMounted(async () => {
+  //   try {
+  //     const values = await validate();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // });
 </script>
 
 <style lang="less" scoped>

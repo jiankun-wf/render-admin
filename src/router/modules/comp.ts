@@ -1,9 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 import { Layout, ParentLayout } from '@/router/constant';
-import { WalletOutlined } from '@vicons/antd';
-import { renderIcon } from '@/utils';
 
-const routeName = 'comp';
+const routeName = 'example-comp';
 
 /**
  * @param name 路由名称, 必须设置,且不能重名
@@ -18,13 +16,13 @@ const routeName = 'comp';
  * */
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/comp',
+    path: '/example-comp',
     name: routeName,
     component: Layout,
-    redirect: '/comp/table',
+    redirect: 'table',
     meta: {
       title: '组件示例',
-      icon: renderIcon(WalletOutlined),
+      icon: 'WalletOutlined',
       alwaysShow: false,
       sort: 8,
     },
